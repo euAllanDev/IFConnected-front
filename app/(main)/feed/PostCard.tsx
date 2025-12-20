@@ -52,17 +52,20 @@ export function PostCard({ post, currentUser }: PostCardProps) {
   );
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
 
-  // Estados de Comentário
+  // --- ESTADOS DE COMENTÁRIO (ATUALIZADOS) ---
+  // 1. Estado para guardar a lista de comentários atual
+  const [comments, setComments] = useState(post.comments || []);
   const [commentCount, setCommentCount] = useState(post.comments?.length || 0);
+
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [loadingComment, setLoadingComment] = useState(false);
 
-  // Verificação segura de propriedade
   const isOwnPost = currentUser?.id === post.userId;
 
   // --- EFEITOS ---
   useEffect(() => {
+    // 1. Carregar Autor
     api
       .getUserById(post.userId)
       .then((user) => {
@@ -73,6 +76,7 @@ export function PostCard({ post, currentUser }: PostCardProps) {
       })
       .catch(() => setAuthorName(`ID #${post.userId}`));
 
+    // 2. Checar Follow
     if (currentUser && !isOwnPost) {
       api
         .isFollowing(currentUser.id, post.userId)
@@ -133,15 +137,23 @@ export function PostCard({ post, currentUser }: PostCardProps) {
 
     setLoadingComment(true);
     try {
-      await api.addComment({
+      // O Backend retorna o objeto POST atualizado (com a nova lista de comentários)
+      const updatedPost = await api.addComment({
         postId: post.id,
         userId: currentUser.id,
         content: commentText.trim(),
       });
 
       setCommentText("");
-      setCommentCount((prev) => prev + 1);
-      setShowCommentInput(false);
+
+      // 2. ATUALIZAÇÃO IMEDIATA NA TELA
+      if (updatedPost && updatedPost.comments) {
+        setComments(updatedPost.comments); // Atualiza a lista visual
+        setCommentCount(updatedPost.comments.length); // Atualiza o contador
+      } else {
+        // Fallback se algo der errado no retorno
+        setCommentCount((prev) => prev + 1);
+      }
     } catch (error) {
       alert("Erro ao enviar comentário.");
       console.error(error);
@@ -151,27 +163,24 @@ export function PostCard({ post, currentUser }: PostCardProps) {
   };
 
   // --- NAVEGAÇÃO ---
-
-  // 1. Ir para a página do POST (Detalhes)
   const goToPost = () => {
     router.push(`/post/${post.id}`);
   };
 
-  // 2. Ir para a página do PERFIL (Autor)
   const goToProfile = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Impede que o clique suba para o card e abra o post
+    e.stopPropagation();
     router.push(`/profile/${post.userId}`);
   };
 
   return (
     <div
-      onClick={goToPost} // <--- MUDANÇA: O card leva ao Post
-      className="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-900 p-4 hover:bg-slate-50 dark:hover:bg-zinc-950 cursor-pointer transition-colors"
+      onClick={goToPost}
+      className="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 p-4 hover:bg-slate-50 dark:hover:bg-zinc-800/30 cursor-pointer transition-colors"
     >
       <div className="flex gap-3">
-        {/* Avatar - Leva ao Perfil */}
+        {/* Avatar */}
         <div
-          onClick={goToProfile} // <--- Mantém navegação para perfil
+          onClick={goToProfile}
           className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400 shrink-0 overflow-hidden relative hover:opacity-80 transition-opacity"
         >
           {author?.profileImageUrl ? (
@@ -190,9 +199,8 @@ export function PostCard({ post, currentUser }: PostCardProps) {
         <div className="flex-1">
           {/* Header */}
           <div className="flex items-center gap-1 text-sm flex-wrap">
-            {/* Nome do Autor - Leva ao Perfil */}
             <span
-              onClick={goToProfile} // <--- Mantém navegação para perfil
+              onClick={goToProfile}
               className="font-bold text-slate-900 dark:text-white hover:underline z-10"
             >
               {authorName}
@@ -238,14 +246,14 @@ export function PostCard({ post, currentUser }: PostCardProps) {
             {post.content}
           </p>
 
-          {/* Imagem do Post - AQUI ESTÁ A MELHORIA */}
+          {/* Imagem do Post */}
           {post.imageUrl && (
-            <div className="mt-3 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 relative w-full aspect-video bg-slate-100 dark:bg-black">
+            <div className="mt-3 rounded-2xl overflow-hidden border border-slate-200 dark:border-zinc-800 relative w-full aspect-video bg-slate-100 dark:bg-black flex justify-center items-center">
               <Image
                 src={post.imageUrl}
                 alt="Post media"
                 fill
-                className="object-contain" // ALTERADO: Garante que a imagem inteira seja visível.
+                className="object-contain"
                 unoptimized
               />
             </div>
@@ -282,34 +290,57 @@ export function PostCard({ post, currentUser }: PostCardProps) {
             </button>
           </div>
 
-          {/* Input de Comentário */}
+          {/* 3. EXIBIÇÃO DOS COMENTÁRIOS E INPUT */}
           {showCommentInput && (
-            <form
-              onSubmit={handleCommentSubmit}
-              className="mt-3 flex gap-2"
+            <div
+              className="mt-3 border-t border-slate-100 dark:border-zinc-800 pt-3"
               onClick={(e) => e.stopPropagation()}
             >
-              <input
-                type="text"
-                placeholder="Escreva um comentário..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                disabled={loadingComment}
-                className="flex-1 p-2 text-sm rounded-full border border-slate-300 dark:border-slate-700 bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                autoFocus
-              />
-              <button
-                type="submit"
-                disabled={!commentText.trim() || loadingComment}
-                className="p-2 rounded-full bg-sky-500 text-white disabled:bg-slate-400 hover:bg-sky-600 transition-colors"
-              >
-                {loadingComment ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <Send size={18} />
-                )}
-              </button>
-            </form>
+              {/* Lista de comentários (Mostra os 3 últimos para não poluir) */}
+              {comments.length > 0 && (
+                <div className="mb-3 space-y-2">
+                  {comments.slice(-3).map((comment: any, index) => (
+                    <div
+                      key={comment.commentId || index}
+                      className="text-sm bg-slate-50 dark:bg-zinc-800/50 p-2.5 rounded-xl"
+                    >
+                      <span className="font-bold text-slate-900 dark:text-white mr-2 text-xs">
+                        {comment.userId === currentUser?.id
+                          ? "Você"
+                          : `User ${comment.userId}`}
+                      </span>
+                      <span className="text-slate-700 dark:text-slate-300 block mt-0.5">
+                        {comment.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Input de Comentário */}
+              <form onSubmit={handleCommentSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Escreva um comentário..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  disabled={loadingComment}
+                  className="flex-1 p-2.5 text-sm rounded-full border border-slate-300 dark:border-zinc-700 bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 placeholder:text-slate-400"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  disabled={!commentText.trim() || loadingComment}
+                  className="p-2.5 rounded-full bg-sky-500 text-white disabled:bg-slate-300 dark:disabled:bg-zinc-700 hover:bg-sky-600 transition-colors shrink-0"
+                >
+                  {loadingComment ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <Send size={18} />
+                  )}
+                </button>
+              </form>
+            </div>
           )}
         </div>
       </div>
