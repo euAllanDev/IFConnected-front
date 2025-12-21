@@ -1,12 +1,12 @@
 "use client";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { api } from "../../../../services/api";
+import { api } from "@/services/api";
 import { Post, User } from "@/types";
-// --- ATENÇÃO AQUI: Garanta que está importando de @/features/feed/PostCard ---
 import { PostCard } from "../../feed/PostCard";
-// -----------------------------------------------------------------------------
 import { useAuth } from "@/contexts/AuthContext";
+import { EditProfileModal } from "@/components/EditProfileModal";
 import {
   ArrowLeft,
   Loader2,
@@ -39,6 +39,8 @@ export default function ProfilePage() {
   const [loadingFollow, setLoadingFollow] = useState(false);
   const [isHoveringFollow, setIsHoveringFollow] = useState(false);
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const loadData = useCallback(async () => {
     if (isNaN(profileId) || !currentUser) {
       setLoading(false);
@@ -52,8 +54,6 @@ export default function ProfilePage() {
       ]);
 
       setProfileData(profileRes);
-      // Log para debug: verifique no console se as URLs das imagens estão chegando aqui
-      console.log("Posts carregados no perfil:", postsRes);
 
       setPosts(
         postsRes.sort(
@@ -107,18 +107,26 @@ export default function ProfilePage() {
     }
   };
 
+  const handleProfileUpdate = (updatedUser: User) => {
+    setProfileData((prev) => (prev ? { ...prev, user: updatedUser } : null));
+    localStorage.setItem("ifconnected:user", JSON.stringify(updatedUser));
+    window.location.reload();
+  };
+
   if (loading)
     return (
       <div className="p-10 text-center">
         <Loader2 className="animate-spin text-sky-500 mx-auto" size={32} />
       </div>
     );
+
   if (!profileData)
     return (
       <div className="p-10 text-center text-slate-500">
         Perfil não encontrado.
       </div>
     );
+
   if (!currentUser) return null;
 
   const isOwnProfile = currentUser.id === profileId;
@@ -129,7 +137,7 @@ export default function ProfilePage() {
       <div className="bg-white dark:bg-zinc-900 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center gap-4">
         <button
           onClick={() => router.back()}
-          className="p-2 hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-full transition-colors"
+          className="p-2 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
@@ -143,14 +151,11 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* CONTEÚDO PRINCIPAL DO PERFIL */}
       <div className="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-slate-800 p-4">
-        {/* Capa */}
-        <div className="h-36 bg-gradient-to-r from-zinc-800 to-zinc-900 w-full relative -mx-4 -mt-4"></div>
+        <div className="h-36 bg-gradient-to-r from-zinc-700 to-zinc-900 w-full relative -mx-4 -mt-4"></div>
 
-        {/* Foto de Perfil */}
         <div className="-mt-16 ml-4 relative z-10">
-          <div className="w-32 h-32 rounded-full border-4 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-5xl font-bold text-slate-500 overflow-hidden">
+          <div className="w-32 h-32 rounded-full border-4 border-white dark:border-zinc-900 bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-5xl font-bold text-slate-500 overflow-hidden">
             {profileData.user.profileImageUrl ? (
               <Image
                 src={profileData.user.profileImageUrl}
@@ -159,7 +164,7 @@ export default function ProfilePage() {
                 height={128}
                 className="w-full h-full object-cover"
                 priority
-                unoptimized // <--- ADICIONE ISTO AQUI
+                unoptimized
               />
             ) : (
               profileData.user.username[0].toUpperCase()
@@ -167,10 +172,14 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Botão de Ação (Alinhado com a foto) */}
-        <div className="flex justify-end -mt-10 mb-4">
+        {/* --- CORREÇÃO AQUI: z-20 para garantir o clique --- */}
+        <div className="flex justify-end -mt-10 mb-4 relative z-20">
           {isOwnProfile ? (
-            <button className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-full font-bold text-sm text-slate-700 dark:text-slate-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-full font-bold text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+            >
+              <Edit2 size={16} />
               Editar Perfil
             </button>
           ) : (
@@ -183,7 +192,7 @@ export default function ProfilePage() {
                 ${
                   isFollowing
                     ? isHoveringFollow
-                      ? "bg-sky-500 text-white border border-red-600 hover:bg-red-700"
+                      ? "bg-red-600 text-white border border-red-600 hover:bg-red-700"
                       : "bg-transparent text-black dark:text-white border border-slate-400 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800"
                     : "bg-black dark:bg-sky-500 text-white hover:opacity-90"
                 } w-36`}
@@ -207,7 +216,6 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Informações */}
         <div className="mt-4">
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
             {profileData.user.username}
@@ -247,7 +255,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* FEED DO USUÁRIO */}
       <div className="mt-0">
         <div className="flex border-b border-slate-200 dark:border-slate-800">
           <button className="px-4 py-3 font-bold text-sm text-slate-900 dark:text-white border-b-4 border-sky-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
@@ -259,11 +266,19 @@ export default function ProfilePage() {
           <p className="p-10 text-center text-slate-500">Nenhuma publicação.</p>
         ) : (
           posts.map((post) => (
-            // AQUI É O PULO DO GATO: Usar o componente correto
             <PostCard key={post.id} post={post} currentUser={currentUser!} />
           ))
         )}
       </div>
+
+      {isOwnProfile && isEditModalOpen && (
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          user={profileData.user}
+          onUpdate={handleProfileUpdate}
+        />
+      )}
     </div>
   );
 }

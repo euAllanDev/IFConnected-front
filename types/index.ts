@@ -25,6 +25,28 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  email: string;
   username: string;
+  email: string;
+  campusId: number; // <--- Novo campo obrigatório
+}
+
+export interface Event {
+  id: number;
+  title: string;
+  description?: string;
+  eventDate: string; // Vem como string ISO do Java
+  locationName: string;
+  campusId: number;
+  creatorId: number;
+  participantIds: number[]; // Lista de IDs de quem vai
+}
+
+// Interface para criar evento
+export interface CreateEventRequest {
+  title: string;
+  description: string;
+  eventDate: string; // ISO String
+  locationName: string;
+  campusId: number;
+  creatorId: number;
 }

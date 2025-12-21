@@ -19,11 +19,35 @@ interface NewComment {
   content: string;
 }
 
+export interface Campus {
+  id: number;
+  name: string;
+}
+
 export const api = {
   // --- Auth ---
   login: (data: LoginRequest) => authService.login(data),
   register: (data: RegisterRequest) => authService.register(data),
   getMe: (id: number) => authService.getMe(id),
+
+  getAllCampuses: () => request<Campus[]>("/campus"),
+
+  // PUT /api/users/{id}
+  updateUser: (user: User) =>
+    request<User>(`/users/${user.id}`, {
+      method: "PUT",
+      body: JSON.stringify(user),
+    }),
+
+  // POST /api/users/{id}/photo
+  uploadProfilePicture: (userId: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return request<User>(`/users/${userId}/photo`, {
+      method: "POST",
+      body: formData,
+    });
+  },
 
   // --- Users & Follow ---
   getUserById: (id: number) => request<User>(`/users/${id}`),
