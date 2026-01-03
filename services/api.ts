@@ -9,6 +9,7 @@ import {
   Post,
   Event,
   CreateEventRequest,
+  Project,
 } from "@/types";
 import { request } from "./apiClient";
 
@@ -137,5 +138,27 @@ export const api = {
   deleteEvent: (id: number) =>
     request<void>(`/events/${id}`, {
       method: "DELETE",
+    }),
+
+    // --- PROJETOS ---
+  getUserProjects: (userId: number) => 
+    request<Project[]>(`/users/${userId}/projects`),
+
+  createProject: (formData: FormData) => 
+    request<Project>("/projects", {
+      method: "POST",
+      body: formData
+    }),
+
+  deleteProject: (id: number) => 
+    request<void>(`/projects/${id}`, {
+      method: "DELETE"
+    }),
+
+    // PUT /api/projects/{id}
+  updateProject: (id: number, formData: FormData) => 
+    request<Project>(`/projects/${id}`, {
+      method: "PUT",
+      body: formData
     }),
 };

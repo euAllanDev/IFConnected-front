@@ -50,3 +50,14 @@ export interface CreateEventRequest {
   campusId: number;
   creatorId: number;
 }
+
+export interface Project {
+  id: number;
+  title: string;
+  description: string;
+  githubUrl?: string;
+  demoUrl?: string;
+  imageUrl?: string;
+  technologies?: string[];
+  userId: number;
+}
