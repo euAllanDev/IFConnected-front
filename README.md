@@ -1,4 +1,4 @@
-<div align="center">
+ <div align="center">
 
 # 🌐 IFConnected
 ### A Rede Social Acadêmica Geo-Localizada
@@ -27,7 +27,7 @@
 
 **IFConnected** é uma plataforma de rede social desenvolvida para conectar estudantes de diferentes campi do Instituto Federal.
 
-Diferente de redes sociais genéricas, o **IFConnected** utiliza inteligência geográfica (**PostGIS**) para conectar alunos que estudam no mesmo campus ou em unidades próximas, facilitando a organização de eventos acadêmicos, caronas e grupos de estudo.
+Diferente de redes sociais genéricas, o **IFConnected** utiliza inteligência geográfica (**PostGIS**) para conectar alunos que estudam no mesmo campus ou em unidades próximas, facilitando a organização de eventos acadêmicos e etc.
 
 O projeto foi construído como um estudo avançado de **Arquitetura de Software**, implementando o conceito de **Persistência Poliglota**, onde diferentes bancos de dados resolvem problemas específicos de performance e escalabilidade.
 
@@ -74,7 +74,7 @@ Presença: Confirmação de participação em eventos.
 🚀 Como Rodar
 Pré-requisitos
 Docker e Docker Compose instalados.
-Java 17+ (JDK).
+Java 21 (JDK).
 Node.js 18+ (Para o frontend).
 1. Subir a Infraestrutura (Docker)
 Na raiz do projeto, inicie os bancos de dados:
