@@ -62,10 +62,9 @@ export default function Sidebar({ user }: { user: User }) {
         <NavItem href="/events" icon={Calendar} label="Eventos" />{" "}
         <NavItem href={`/profile/${userId}`} icon={UserIcon} label="Perfil" />
         {/* Botão para Postar (Em breve) */}
-        <button className="mt-4 bg-sky-400 0 text-white w-fit xl:w-full py-3 px-6 rounded-full font-bold text-lg shadow-lg hover:bg-sky-500 transition">
+        {/* <button className="mt-4 bg-sky-400 0 text-white w-fit xl:w-full py-3 px-6 rounded-full font-bold text-lg shadow-lg hover:bg-sky-500 transition">
           <span className="xl:hidden">+</span>
-          <span className="hidden xl:inline">Publicar</span>
-        </button>
+        </button> */}
       </div>
 
       {/* Rodapé da Sidebar: Usuário Logado e Configuração */}
@@ -82,7 +81,6 @@ export default function Sidebar({ user }: { user: User }) {
               </p>
             </div>
           </div>
-          <ThemeToggle /> {/* Botão de Modo Escuro */}
         </div>
 
         <button
