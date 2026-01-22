@@ -1,94 +1,137 @@
 "use client";
+
 import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { authService } from "@/services/authService";
 import Link from "next/link";
-import { LogIn, AlertCircle } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/services/api";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const { login } = useAuth();
+
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState(""); // Usamos para o POST /login
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setError(null);
+
     try {
-      // POST para /api/login
-      const user = await authService.login({ email, username });
-      login(user); // Chama o método do contexto para salvar e redirecionar
+      // 🔐 Login no backend
+      const user = await api.login({ email, password });
+
+      // ✅ Atualiza AuthContext + localStorage + redirect
+      login(user);
     } catch (err: any) {
-      // O erro do Java (e-mail não existe) cai aqui
-      setError(err.message || "Erro de conexão. Verifique o backend.");
+      console.error(err);
+      setError(err.message || "Credenciais inválidas. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 transition-colors">
-      <div className="flex flex-col items-center mb-8">
-        <LogIn size={36} className="text-indigo-600 dark:text-sky-500 mb-3" />
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">
-          Bem-vindo(a)
-        </h1>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
-            Usuário
-          </label>
-          <input
-            type="text"
-            required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-3 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 focus:ring-indigo-500 outline-none transition-colors text-slate-900 dark:text-slate-50"
-            placeholder="Seu nome de usuário"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 focus:ring-indigo-500 outline-none transition-colors text-slate-900 dark:text-slate-50"
-            placeholder="seu.email@if.edu.br"
-          />
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 p-4">
+      <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 dark:border-zinc-800 animate-in fade-in zoom-in duration-300">
+        
+        {/* Cabeçalho */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 mb-2">
+            IFconnected
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
+            Bem-vindo de volta! 👋
+          </p>
         </div>
 
+        {/* Mensagem de erro */}
         {error && (
-          <div className="text-red-600 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg text-sm flex gap-2 border border-red-200 dark:border-red-800">
-            <AlertCircle size={16} className="shrink-0 mt-0.5" />
-            <span>{error}</span>
+          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 flex items-center gap-3">
+            <div className="w-2 h-2 bg-red-500 rounded-full" />
+            <span className="text-sm font-semibold text-red-600 dark:text-red-400">
+              {error}
+            </span>
           </div>
         )}
 
-        <button
-          disabled={loading}
-          className="w-full bg-indigo-600 dark:bg-sky-500 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 dark:hover:bg-sky-600 transition disabled:opacity-60"
-        >
-          {loading ? "Verificando..." : "Entrar"}
-        </button>
-      </form>
+        {/* Formulário */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+              Email institucional
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="nome@ifpb.edu.br"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-medium"
+              />
+            </div>
+          </div>
 
-      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-        Não tem conta?{" "}
-        <Link
-          href="/register"
-          className="text-indigo-600 dark:text-sky-500 font-bold hover:underline transition"
-        >
-          Crie uma agora.
-        </Link>
-      </p>
+          {/* Senha */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+              Senha
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-medium"
+              />
+            </div>
+          </div>
+
+          {/* Botão */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin h-5 w-5" />
+                <span>Autenticando...</span>
+              </>
+            ) : (
+              <>
+                <span>Entrar na plataforma</span>
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Rodapé */}
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-zinc-800 text-center">
+          <p className="text-sm text-slate-500">
+            Ainda não faz parte?{" "}
+            <Link
+              href="/register"
+              className="font-bold text-sky-500 hover:text-sky-600 hover:underline"
+            >
+              Criar conta agora
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

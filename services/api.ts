@@ -13,9 +13,8 @@ import {
 } from "@/types";
 import { request } from "./apiClient";
 
-// Interface para o body do comentário (Front-end)
 interface NewComment {
-  postId: string | number; // <--- MUDANÇA
+  postId: string | number;
   userId: number;
   content: string;
 }
@@ -26,21 +25,18 @@ export interface Campus {
 }
 
 export const api = {
-  // --- Auth ---
   login: (data: LoginRequest) => authService.login(data),
   register: (data: RegisterRequest) => authService.register(data),
   getMe: (id: number) => authService.getMe(id),
 
   getAllCampuses: () => request<Campus[]>("/campus"),
 
-  // PUT /api/users/{id}
   updateUser: (user: User) =>
     request<User>(`/users/${user.id}`, {
       method: "PUT",
       body: JSON.stringify(user),
     }),
 
-  // POST /api/users/{id}/photo
   uploadProfilePicture: (userId: number, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -50,7 +46,6 @@ export const api = {
     });
   },
 
-  // --- Users & Follow ---
   getUserById: (id: number) => request<User>(`/users/${id}`),
   getUserProfile: (userId: number) => request<any>(`/users/${userId}/profile`),
 
@@ -71,7 +66,6 @@ export const api = {
     return request<User[]>(`/users/${userId}/suggestions?radiusKm=${radiusKm}`);
   },
 
-  // --- Posts & Ações ---
   getAllPosts: () => postService.getAll(),
   getPostsByUser: (userId: number) => postService.getPostsByUser(userId),
   getFriendsFeed: (userId: number) => postService.getFriendsFeed(userId),
@@ -86,7 +80,6 @@ export const api = {
 
   getPostById: (postId: string | number) => request<Post>(`/posts/${postId}`),
 
-  // ❗ CORREÇÃO AQUI
   addComment: (data: NewComment) =>
     request<any>(`/posts/${data.postId}/comments`, {
       method: "POST",
@@ -96,7 +89,6 @@ export const api = {
       }),
     }),
 
-  // --- Notificações ---
   getNotifications: (userId: number) =>
     request<any[]>(`/notifications/user/${userId}`),
 
@@ -112,17 +104,14 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  // GET /api/events/campus/{campusId}
   getEventsByCampus: (campusId: number) =>
     request<Event[]>(`/events/campus/${campusId}`),
 
-  // POST /api/events/{id}/join?userId=...
   joinEvent: (eventId: number, userId: number) =>
     request<void>(`/events/${eventId}/join?userId=${userId}`, {
       method: "POST",
     }),
 
-  // POST /api/events/{id}/leave?userId=...
   leaveEvent: (eventId: number, userId: number) =>
     request<void>(`/events/${eventId}/leave?userId=${userId}`, {
       method: "POST",
@@ -134,7 +123,6 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  // DELETE /api/events/{id}
   deleteEvent: (id: number) =>
     request<void>(`/events/${id}`, {
       method: "DELETE",

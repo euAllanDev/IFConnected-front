@@ -64,7 +64,7 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
       <div className="flex gap-3">
         {/* Avatar (Mock) */}
         <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500 flex items-center justify-center font-bold text-sky-600 dark:text-white shrink-0">
-          {user.username[0].toUpperCase()}
+          {user?.username?.[0]?.toUpperCase() || "U"}
         </div>
 
         <div className="flex-1">

@@ -1,39 +1,52 @@
-export const API_BASE_URL = "http://localhost:8080/api";
+export const API_ROOT = "http://localhost:8080";
 
 export async function request<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  // 🔹 Rotas públicas (/auth) NÃO usam /api
+  const url = endpoint.startsWith("/auth")
+    ? `${API_ROOT}${endpoint}`
+    : `${API_ROOT}/api${endpoint}`;
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...options.headers,
-  };
+  // 🔹 Headers padrão
+  const headers = new Headers(options.headers || {});
 
-  if (options.body instanceof FormData) {
-    delete (headers as any)["Content-Type"];
+  // 🔹 Só define JSON se NÃO for FormData
+  if (!(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  // 🔹 Injeta token JWT corretamente (PADRÃO ÚNICO)
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("ifconnected:token");
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
   }
 
   try {
-    const response = await fetch(url, { ...options, headers });
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
 
-    // Tenta ler o corpo da resposta (pode ser vazio ou JSON)
     const text = await response.text();
-    let data: any = {};
+    let data: any = null;
 
     if (text) {
       try {
         data = JSON.parse(text);
-      } catch (e) {
+      } catch {
         console.warn("Resposta não é JSON válido:", text);
       }
     }
 
     if (!response.ok) {
-      // Se o backend mandou uma mensagem de erro (ex: "No value present"), usamos ela
       const errorMessage =
-        data.message || data.error || `Erro HTTP: ${response.status}`;
+        data?.message ||
+        data?.error ||
+        `Erro HTTP ${response.status}`;
       throw new Error(errorMessage);
     }
 

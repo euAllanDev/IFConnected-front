@@ -2,24 +2,26 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { authService } from "@/services/authService";
-import { api, Campus } from "@/services/api"; // Importe a interface Campus
+import { api, Campus } from "@/services/api"; 
 import Link from "next/link";
 import { UserPlus, ArrowLeft, AlertCircle, MapPin } from "lucide-react";
 
 export default function RegisterPage() {
   const { login } = useAuth();
 
-  // Estados do Form
+
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-  const [campusId, setCampusId] = useState(""); // String para o select, converte depois
+  const [campusId, setCampusId] = useState(""); 
+  const [password, setPassword] = useState("");
 
-  // Estados de Dados e UI
+
+
   const [campuses, setCampuses] = useState<Campus[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 1. Carregar lista de Campi ao iniciar
+
   useEffect(() => {
     api
       .getAllCampuses()
@@ -30,7 +32,6 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação simples
     if (!campusId) {
       setError("Por favor, selecione seu Campus.");
       return;
@@ -40,11 +41,11 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      // POST para /api/users com o campusId
       const user = await authService.register({
         email,
         username,
-        campusId: Number(campusId), // Converte para number
+        campusId: Number(campusId), 
+        password: password
       });
 
       login(user);
@@ -96,6 +97,20 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 focus:ring-indigo-500 outline-none transition-colors text-slate-900 dark:text-slate-50"
             placeholder="seu.email@if.edu.br"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Senha
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="********"
+            required
           />
         </div>
 

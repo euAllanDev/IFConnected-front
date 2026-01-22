@@ -8,8 +8,8 @@ import {
   LogOut,
   Bell,
   Calendar,
-} from "lucide-react"; // <--- Adicione Bell
-import ThemeToggle from "@/components/ThemeToggle";
+} from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle"; // Se não usar, pode remover
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "../../types/index";
 
@@ -41,44 +41,66 @@ const NavItem = ({
   );
 };
 
-export default function Sidebar({ user }: { user: User }) {
+// Adicionei 'User | null' para o TypeScript não reclamar se vier vazio
+export default function Sidebar({ user }: { user: User | null }) {
   const { logout } = useAuth();
 
-  // O ID do usuário logado é essencial para o link de perfil
-  const userId = user.id;
+  // 1. PROTEÇÃO DE ID:
+  // Se user for nulo, userId vira undefined (não quebra a tela)
+  const userId = user?.id;
+
+  // Se o usuário não existir ainda, retornamos null ou um esqueleto simples
+  // para evitar erros de renderização
+  if (!user) return null; 
 
   return (
     <aside className="w-[275px] hidden md:flex flex-col p-4 fixed h-screen z-20">
       <div className="flex flex-col items-center xl:items-start space-y-2">
-        {/* Logo Estilo X */}
+        {/* Logo */}
         <div className="p-3 mb-4">
           <span className="font-extrabold text-3xl text-sky-500">
             IFconnect
           </span>
         </div>
+        
         <NavItem href="/feed" icon={Home} label="Feed Principal" />
         <NavItem href="/regional" icon={MapPin} label="Campus & Perto" />
-        <NavItem href="/notifications" icon={Bell} label="Notificações" />{" "}
-        <NavItem href="/events" icon={Calendar} label="Eventos" />{" "}
-        <NavItem href={`/profile/${userId}`} icon={UserIcon} label="Perfil" />
-        {/* Botão para Postar (Em breve) */}
-        <button className="mt-4 bg-sky-400 0 text-white w-fit xl:w-full py-3 px-6 rounded-full font-bold text-lg shadow-lg hover:bg-sky-500 transition">
-          <span className="xl:hidden">+</span>
-          <span className="hidden xl:inline">Publicar</span>
-        </button>
+        <NavItem href="/notifications" icon={Bell} label="Notificações" />
+        <NavItem href="/events" icon={Calendar} label="Eventos" />
+        
+        {/* 2. PROTEÇÃO DE LINK: Só cria o link se tiver userId */}
+        <NavItem 
+          href={userId ? `/profile/${userId}` : "#"} 
+          icon={UserIcon} 
+          label="Perfil" 
+        />
       </div>
 
-      {/* Rodapé da Sidebar: Usuário Logado e Configuração */}
+      {/* Rodapé da Sidebar */}
       <div className="mt-auto w-full">
         <div className="flex justify-between items-center w-full p-3 hover:bg-slate-100 dark:hover:bg-zinc-800/20 rounded-full transition cursor-pointer">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-zinc-800/10 rounded-full flex items-center justify-center font-bold text-white">
-              {user.username[0].toUpperCase()}
+            {/* Avatar com Proteção */}
+            <div className="w-10 h-10 bg-zinc-800/10 rounded-full flex items-center justify-center font-bold text-white overflow-hidden">
+                {/* Se tiver foto, mostra a foto, senão mostra a Inicial */}
+                {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt="Avatar" className="w-full h-full object-cover"/>
+                ) : (
+                    <span className="text-gray-600 dark:text-gray-300">
+                        {user?.username?.[0]?.toUpperCase() || "U"}
+                    </span>
+                )}
             </div>
+            
             <div className="hidden xl:block overflow-hidden">
-              <p className="font-bold text-sm truncate">{user.username}</p>
+              {/* 3. PROTEÇÃO DE NOME: Usa Optional Chaining */}
+              <p className="font-bold text-sm truncate">
+                {user?.username || "Usuário"}
+              </p>
+              
+              {/* 4. PROTEÇÃO DE EMAIL: Já estava correta */}
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                @{user.email.split("@")[0]}
+                @{user?.email?.split("@")?.[0] || "..."}
               </p>
             </div>
           </div>
