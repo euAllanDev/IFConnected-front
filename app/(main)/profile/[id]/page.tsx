@@ -34,7 +34,7 @@ interface UserProfileData {
 export default function ProfilePage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, setUserAndPersist } = useAuth();
   const profileId = Number(id);
 
   // Estados Base
@@ -87,12 +87,23 @@ export default function ProfilePage() {
 
   // Handlers
   const handleFollowToggle = async () => { /* ... igual ao anterior ... */ };
-  const handleProfileUpdate = (updatedUser: User) => { /* ... igual ao anterior ... */ };
+  const handleProfileUpdate = (updatedUser: User) => {
+    // 1) atualiza o estado local da página
+    setProfileData((prev) =>
+      prev ? { ...prev, user: updatedUser } : prev
+    );
+
+    // 2) se você estiver editando seu próprio perfil,
+    // atualiza o user global do app (feed / navbar / composer)
+    if (isOwnProfile) {
+      setUserAndPersist(updatedUser);
+    }
+  };
   const handleDeleteProject = async (id: number) => {
-    if(!confirm("Tem certeza que deseja deletar este projeto?")) return;
+    if (!confirm("Tem certeza que deseja deletar este projeto?")) return;
     try {
-        await api.deleteProject(id);
-        setProjects(prev => prev.filter(p => p.id !== id));
+      await api.deleteProject(id);
+      setProjects(prev => prev.filter(p => p.id !== id));
     } catch (error) { console.error(error); }
   };
 

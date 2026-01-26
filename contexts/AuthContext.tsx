@@ -17,8 +17,11 @@ interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
+  updateUser: (userData: User) => void;
   isAuthenticated: boolean;
   isLoading: boolean;
+  setUserAndPersist: (userData: User) => void;
+
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,20 +32,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // 1. Efeito para carregar o usuário do LocalStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("ifconnected:user");
-    if (storedUser) {
-      try {
-        const userData: User = JSON.parse(storedUser);
-        // Poderia fazer um fetch para validar o token aqui, mas vamos simplificar
-        setUser(userData);
-      } catch (e) {
-        localStorage.removeItem("ifconnected:user");
-      }
-    }
+  const storedUser = localStorage.getItem("ifconnected:user");
+
+  // Se não tiver nada salvo, só libera a tela
+  if (!storedUser) {
     setIsLoading(false);
-  }, []);
+    return;
+  }
+
+  try {
+    const userData: User = JSON.parse(storedUser);
+    setUser(userData);
+
+    // ✅ Refresh no backend pra pegar dados atualizados (foto, username, etc)
+    authService
+      .getMe(userData.id) // ou api.getUserById(userData.id)
+      .then((freshUser) => {
+        setUser(freshUser);
+        localStorage.setItem("ifconnected:user", JSON.stringify(freshUser));
+      })
+      .catch(() => {
+        // Se falhar, mantém o que estava no localStorage
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  } catch (e) {
+    localStorage.removeItem("ifconnected:user");
+    setUser(null);
+    setIsLoading(false);
+  }
+}, []);
 
   // 2. Proteção de Rota (Redirecionamento)
   useEffect(() => {
@@ -52,10 +73,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isLoading) return;
 
     if (user && isAuthRoute) {
-      // Já logado e tentando ir para login/register: Redireciona para o feed
       router.push("/feed");
     } else if (!user && !isAuthRoute) {
-      // Não logado e tentando ir para uma rota protegida: Redireciona para o login
       router.push("/login");
     }
   }, [user, isLoading, pathname, router]);
@@ -63,25 +82,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (userData: User) => {
     setUser(userData);
     localStorage.setItem("ifconnected:user", JSON.stringify(userData));
-    router.push("/feed"); // Redireciona para o novo feed
+    router.push("/feed"); 
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("ifconnected:user");
-    router.push("/login"); // Manda para o login
+    router.push("/login"); 
+  };
+
+  const updateUser = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem("ifconnected:user", JSON.stringify(userData));
+  };
+
+  const setUserAndPersist = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem("ifconnected:user", JSON.stringify(userData));
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated: !!user, isLoading }}
+      value={{ user, login, logout, updateUser, isAuthenticated: !!user, isLoading, setUserAndPersist }}
     >
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Hook Customizado para usar o Contexto
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

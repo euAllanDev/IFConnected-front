@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Post, User } from "@/types";
 import { postService } from "@/services/postService";
 import { Image as ImageIcon, X, Loader2 } from "lucide-react";
+import Image from "next/image";
 
 interface CreatePostProps {
   user: User;
@@ -15,6 +16,33 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // ✅ mantém o user do composer sempre atualizado (foto/username)
+  const [currentUser, setCurrentUser] = useState<User>(user);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const syncFromStorage = () => {
+      const stored = localStorage.getItem("ifconnected:user");
+      if (!stored) return;
+      try {
+        const parsed: User = JSON.parse(stored);
+        // só atualiza se for o mesmo usuário logado
+        if (parsed?.id === user.id) setCurrentUser(parsed);
+      } catch {}
+    };
+
+    syncFromStorage();
+
+    const handler = () => syncFromStorage();
+    window.addEventListener("ifconnected:user-updated", handler);
+    return () => window.removeEventListener("ifconnected:user-updated", handler);
+  }, [user.id]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -33,20 +61,18 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
 
     setLoading(true);
     const formData = new FormData();
-    formData.append("userId", user.id.toString());
+    formData.append("userId", currentUser.id.toString());
     formData.append("content", content);
-    if (imageFile) {
-      formData.append("file", imageFile); // 'file' é o nome que o backend espera
-    }
+    if (imageFile) formData.append("file", imageFile);
 
     try {
       const newPost = await postService.create(formData);
 
-      // Limpa o formulário e notifica o feed
       setContent("");
       setImageFile(null);
       setImagePreviewUrl(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
+
       onPostCreated(newPost);
     } catch (error) {
       console.error("Erro ao criar post:", error);
@@ -56,27 +82,41 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
     }
   };
 
+  const avatarLetter =
+    currentUser?.username?.trim()?.[0]?.toUpperCase() ||
+    currentUser?.email?.trim()?.[0]?.toUpperCase() ||
+    "U";
+
   return (
     <form
       onSubmit={handleSubmit}
       className="bg-white dark:bg-gray-950/90 border-b border-slate-200 dark:border-slate-800 p-4"
     >
       <div className="flex gap-3">
-        {/* Avatar (Mock) */}
-        <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500 flex items-center justify-center font-bold text-sky-600 dark:text-white shrink-0">
-          {user?.username?.[0]?.toUpperCase() || "U"}
+        {/* ✅ Avatar real */}
+        <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500 flex items-center justify-center font-bold text-sky-600 dark:text-white shrink-0 overflow-hidden relative">
+          {currentUser?.profileImageUrl ? (
+            <Image
+              src={currentUser.profileImageUrl}
+              alt="Avatar"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          ) : (
+            avatarLetter
+          )}
         </div>
 
         <div className="flex-1">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={`O que está acontecendo no Campus, ${user.username}?`}
+            placeholder={`O que está acontecendo no Campus, ${currentUser.username}?`}
             className="w-full resize-none outline-none text-xl placeholder:text-slate-400 dark:placeholder:text-slate-600 bg-transparent text-slate-900 dark:text-slate-50"
-            rows={content || imageFile ? 3 : 1} // Aumenta o tamanho
+            rows={content || imageFile ? 3 : 1}
           />
 
-          {/* Preview da Imagem */}
           {imagePreviewUrl && (
             <div className="relative mt-3 mb-3">
               <img
@@ -99,7 +139,6 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
           )}
 
           <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-            {/* Input de Arquivo Oculto */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -115,17 +154,12 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
               />
             </button>
 
-            {/* Botão Publicar */}
             <button
               type="submit"
               disabled={loading || (!content.trim() && !imageFile)}
               className="bg-sky-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-sky-500 cursor-pointer transition disabled:opacity-50 flex items-center gap-2"
             >
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                "Publicar"
-              )}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : "Publicar"}
             </button>
           </div>
         </div>
