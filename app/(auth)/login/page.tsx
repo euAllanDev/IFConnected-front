@@ -20,10 +20,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // 🔐 Login no backend
       const user = await api.login({ email, password });
-
-      // ✅ Atualiza AuthContext + localStorage + redirect
       login(user);
     } catch (err: any) {
       console.error(err);
@@ -34,22 +31,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 p-4">
-      <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 dark:border-zinc-800 animate-in fade-in zoom-in duration-300">
-        
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-900 to-sky-900">
+      <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border border-white/10 dark:border-zinc-800">
         {/* Cabeçalho */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 mb-2">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500 mb-2">
             IFconnected
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium">
-            Bem-vindo de volta! 👋
+            Bem-vindo de volta 👋
           </p>
         </div>
 
         {/* Mensagem de erro */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 flex items-center gap-3">
+          <div className="mb-6 p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 flex items-center gap-3">
             <div className="w-2 h-2 bg-red-500 rounded-full" />
             <span className="text-sm font-semibold text-red-600 dark:text-red-400">
               {error}
@@ -74,7 +70,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="nome@ifpb.edu.br"
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-medium"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all font-medium"
               />
             </div>
           </div>
@@ -94,7 +90,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-medium"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all font-medium"
               />
             </div>
           </div>
@@ -103,7 +99,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
+            className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -112,7 +108,7 @@ export default function LoginPage() {
               </>
             ) : (
               <>
-                <span>Entrar na plataforma</span>
+                <span>Entrar</span>
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </>
             )}
@@ -121,11 +117,11 @@ export default function LoginPage() {
 
         {/* Rodapé */}
         <div className="mt-8 pt-6 border-t border-slate-100 dark:border-zinc-800 text-center">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Ainda não faz parte?{" "}
             <Link
               href="/register"
-              className="font-bold text-sky-500 hover:text-sky-600 hover:underline"
+              className="font-bold text-sky-500 hover:text-sky-600 hover:underline decoration-2 underline-offset-2"
             >
               Criar conta agora
             </Link>
