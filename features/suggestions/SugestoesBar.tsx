@@ -62,7 +62,7 @@ export function SugestoesBar() {
                   {s.username[0].toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-bold text-sm truncate">{s.username}</p>
+                  <p className="font-bold text-sm  truncate">{s.username}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                     Campus Próximo
                   </p>
