@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation"; // Importação do Router do Next.js
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/services/api";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
@@ -25,7 +25,7 @@ const PHRASES =[
 
 // --- COMPONENTE DE ANIMAÇÃO DE DIGITAÇÃO ---
 function Typewriter() {
-  const [text, setText] = useState("");
+  const[text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const[loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(100);
@@ -65,7 +65,7 @@ function Typewriter() {
 
 // --- COMPONENTE PRINCIPAL ---
 export default function LoginPage() {
-  const router = useRouter(); // Inicializando o roteador
+  const router = useRouter(); 
   const { login } = useAuth();
   
   const [email, setEmail] = useState("");
@@ -78,7 +78,7 @@ export default function LoginPage() {
 
   // Busca e pré-carrega a imagem aleatória
   useEffect(() => {
-    let isMounted = true; // Previne vazamento de memória se o componente desmontar
+    let isMounted = true; 
     const randomNum = Math.floor(Math.random() * 1000);
     const imageUrl = `https://loremflickr.com/1920/1080/white,nature?random=${randomNum}`;
 
@@ -101,15 +101,17 @@ export default function LoginPage() {
     };
   },[]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
       const user = await api.login({ email, password });
+      // ⚠️ IMPORTANTE: O login manual também precisa do token gerado pelo backend.
+      // Se a sua API não retornar token no login manual, ele vai dar erro 401 depois.
       login(user);
-      router.push("/feed"); // Adicionado redirecionamento no login manual também
+      // O router.push() foi removido. O AuthContext assume o volante.
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Credenciais inválidas. Tente novamente.");
@@ -118,7 +120,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
+ const handleGoogleSuccess = async (credentialResponse: any) => {
     setError("");
     setLoading(true);
     try {
@@ -126,14 +128,9 @@ export default function LoginPage() {
 
       if (data.token && data.user) {
         localStorage.setItem("ifconnected:token", data.token);
-        login(data.user);
-
-        // Substituição do window.location.href pelo router.push
-        if (!data.user.campusId) {
-          router.push("/complete-profile");
-        } else {
-          router.push("/feed");
-        }
+        
+        login(data.user); 
+        // O router.push() foi removido daqui também! O AuthContext assume.
       }
     } catch (err: any) {
       console.error("Erro Google", err);

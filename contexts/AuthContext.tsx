@@ -1,119 +1,84 @@
-// src/contexts/AuthContext.tsx
-
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User } from "@/types";
 import { useRouter, usePathname } from "next/navigation";
-import { authService } from "../services/authService";
 
 interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
-  updateUser: (userData: User) => void;
   isAuthenticated: boolean;
   isLoading: boolean;
-  setUserAndPersist: (userData: User) => void;
-
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const[user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
+  // 1. Carrega o usuário ao iniciar o app
   useEffect(() => {
-  const storedUser = localStorage.getItem("ifconnected:user");
-
-  // Se não tiver nada salvo, só libera a tela
-  if (!storedUser) {
+    const storedUser = localStorage.getItem("ifconnected:user");
+    if (storedUser) {
+        try {
+            setUser(JSON.parse(storedUser)); 
+        } catch (e) {
+            localStorage.removeItem("ifconnected:user");
+        }
+    }
     setIsLoading(false);
-    return;
-  }
-
-  try {
-    const userData: User = JSON.parse(storedUser);
-    setUser(userData);
-
-    // ✅ Refresh no backend pra pegar dados atualizados (foto, username, etc)
-    authService
-      .getMe(userData.id) // ou api.getUserById(userData.id)
-      .then((freshUser) => {
-        setUser(freshUser);
-        localStorage.setItem("ifconnected:user", JSON.stringify(freshUser));
-      })
-      .catch(() => {
-        // Se falhar, mantém o que estava no localStorage
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  } catch (e) {
-    localStorage.removeItem("ifconnected:user");
-    setUser(null);
-    setIsLoading(false);
-  }
-}, []);
-
-  // 2. Proteção de Rota (Redirecionamento)
+  },[]);
+  
+  // 2. VIGILANTE DE ROTAS (Aqui a mágica acontece)
   useEffect(() => {
-    const isAuthRoute =
-      pathname.includes("/login") || pathname.includes("/register");
+    if (isLoading) return; // Espera carregar
 
-    if (isLoading) return;
+    const isAuthRoute = pathname.includes("/login") || pathname.includes("/register");
+    const isCompleteProfile = pathname.includes("/complete-profile");
 
-    if (user && isAuthRoute) {
-      router.push("/feed");
-    } else if (!user && !isAuthRoute) {
-      router.push("/login");
+    if (user) {
+      // USUÁRIO LOGADO:
+      if (!user.campusId && !isCompleteProfile) {
+        // Se não tem campus e não está na tela de completar, FORÇA ir pra lá
+        router.push("/complete-profile");
+      } else if (user.campusId && (isAuthRoute || isCompleteProfile)) {
+        // Se já tem campus e tenta acessar Login ou Complete, manda pro Feed
+        router.push("/feed");
+      }
+    } else {
+      // USUÁRIO NÃO LOGADO:
+      if (!isAuthRoute) {
+        router.push("/login"); // Expulsa para o login se tentar acessar rotas privadas
+      }
     }
   }, [user, isLoading, pathname, router]);
 
   const login = (userData: User) => {
     setUser(userData);
     localStorage.setItem("ifconnected:user", JSON.stringify(userData));
-    router.push("/feed"); 
+    // Removemos o router.push("/feed") daqui! O useEffect acima fará o redirecionamento automático!
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("ifconnected:user");
-    router.push("/login"); 
-  };
-
-  const updateUser = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem("ifconnected:user", JSON.stringify(userData));
-  };
-
-  const setUserAndPersist = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem("ifconnected:user", JSON.stringify(userData));
+    localStorage.removeItem("ifconnected:token");
+    router.push("/login");
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, logout, updateUser, isAuthenticated: !!user, isLoading, setUserAndPersist }}
-    >
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');
+    return context;
 };
