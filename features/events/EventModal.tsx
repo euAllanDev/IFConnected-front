@@ -118,7 +118,7 @@ export function EventModal({
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition dark:text-white"
+              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition dark:text-white"
               placeholder="Ex: Torneio de Xadrez"
             />
           </div>
@@ -134,7 +134,7 @@ export function EventModal({
               onChange={(e) =>
                 setFormData({ ...formData, eventDate: e.target.value })
               }
-              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-sky-500 outline-none dark:text-white dark:[color-scheme:dark]"
+              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white dark:[color-scheme:dark]"
             />
           </div>
 
@@ -149,7 +149,7 @@ export function EventModal({
               onChange={(e) =>
                 setFormData({ ...formData, locationName: e.target.value })
               }
-              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-sky-500 outline-none dark:text-white"
+              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white"
               placeholder="Ex: Sala 204"
             />
           </div>
@@ -164,7 +164,7 @@ export function EventModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-sky-500 outline-none min-h-[100px] dark:text-white"
+              className="w-full rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none min-h-[100px] dark:text-white"
               placeholder="Detalhes sobre o evento..."
             />
           </div>
@@ -172,7 +172,7 @@ export function EventModal({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading && <Loader2 className="animate-spin" size={18} />}
             {eventToEdit ? "Salvar Alterações" : "Criar Evento"}

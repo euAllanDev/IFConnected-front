@@ -17,7 +17,7 @@ export function ProjectCard({ project, currentUser, onDelete, onClick, onEdit }:
   return (
     <div 
       onClick={() => onClick(project)} 
-      className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:border-sky-500 transition-all hover:shadow-lg hover:shadow-sky-500/10 flex flex-col h-full cursor-pointer relative"
+      className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col h-full cursor-pointer relative"
     >
       
       {/* Imagem */}
@@ -43,7 +43,7 @@ export function ProjectCard({ project, currentUser, onDelete, onClick, onEdit }:
                 e.stopPropagation(); // Impede abrir o modal de detalhes
                 onEdit(project);
               }} 
-              className="p-2 bg-black/50 text-white rounded-full hover:bg-sky-500 transition backdrop-blur-sm"
+              className="p-2 bg-black/50 text-white rounded-full hover:bg-emerald-500 transition backdrop-blur-sm"
               title="Editar Projeto"
             >
               <Edit size={16} />

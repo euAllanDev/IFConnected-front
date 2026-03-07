@@ -53,7 +53,7 @@ export default function CompleteProfilePage() {
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-slate-50 dark:bg-zinc-900">
       <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-zinc-800">
         <div className="text-center mb-6">
-          <div className="w-12 h-12 bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
             <MapPin size={24} />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Quase lá!</h1>
@@ -71,7 +71,7 @@ export default function CompleteProfilePage() {
               required
               value={campusId}
               onChange={(e) => setCampusId(e.target.value)}
-              className="w-full p-3 border rounded-xl bg-slate-50 dark:bg-zinc-950 border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-sky-500 outline-none transition text-slate-900 dark:text-white"
+              className="w-full p-3 border rounded-xl bg-slate-50 dark:bg-zinc-950 border-slate-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 outline-none transition text-slate-900 dark:text-white"
             >
               <option value="" disabled>Selecione...</option>
               {campuses.map((c) => (
@@ -85,7 +85,7 @@ export default function CompleteProfilePage() {
           <button
             type="submit"
             disabled={loading || !campusId}
-            className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? <Loader2 className="animate-spin" /> : <><Save size={18}/> Salvar e Continuar</>}
           </button>

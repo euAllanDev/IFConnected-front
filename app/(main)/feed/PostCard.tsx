@@ -226,7 +226,7 @@ export function PostCard({ post, currentUser }: PostCardProps) {
                             ${
                               isFollowing
                                 ? "text-slate-500 dark:text-slate-400 hover:text-red-500"
-                                : "text-sky-500 hover:text-sky-600"
+                                : "text-emerald-500 hover:text-emerald-600"
                             }`}
                 >
                   {loadingFollow ? (
@@ -275,9 +275,9 @@ export function PostCard({ post, currentUser }: PostCardProps) {
 
             <button
               onClick={toggleCommentInput}
-              className="flex items-center gap-2 group hover:text-sky-500 transition-colors"
+              className="flex items-center gap-2 group hover:text-emerald-500 transition-colors"
             >
-              <div className="p-2 rounded-full group-hover:bg-sky-500/10 transition-colors">
+              <div className="p-2 rounded-full group-hover:bg-emerald-500/10 transition-colors">
                 <MessageCircle size={18} />
               </div>
               <span className="text-xs">{commentCount}</span>
@@ -325,13 +325,13 @@ export function PostCard({ post, currentUser }: PostCardProps) {
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   disabled={loadingComment}
-                  className="flex-1 p-2.5 text-sm rounded-full border border-slate-300 dark:border-zinc-700 bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 placeholder:text-slate-400"
+                  className="flex-1 p-2.5 text-sm rounded-full border border-slate-300 dark:border-zinc-700 bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400"
                   autoFocus
                 />
                 <button
                   type="submit"
                   disabled={!commentText.trim() || loadingComment}
-                  className="p-2.5 rounded-full bg-sky-500 text-white disabled:bg-slate-300 dark:disabled:bg-zinc-700 hover:bg-sky-600 transition-colors shrink-0"
+                  className="p-2.5 rounded-full bg-emerald-500 text-white disabled:bg-slate-300 dark:disabled:bg-zinc-700 hover:bg--600 transition-colors shrink-0"
                 >
                   {loadingComment ? (
                     <Loader2 size={18} className="animate-spin" />

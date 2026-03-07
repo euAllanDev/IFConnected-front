@@ -31,11 +31,11 @@ const NavItem = ({
       href={href}
       className={`flex items-center gap-4 p-3 rounded-full transition-colors font-bold text-lg w-fit xl:w-full ${
         isActive
-          ? "text-sky-700"
-          : "text-slate-900 dark:text-slate-50 hover:bg-slate-100 dark:hover:bg-sky-700/20"
+          ? "text-emerald-700"
+          : "text-slate-900 dark:text-slate-50 hover:bg-slate-100 dark:hover:bg-emerald-700/20"
       }`}
     >
-      <Icon size={26} className={isActive ? "text-sky-600" : ""} />
+      <Icon size={26} className={isActive ? "text-emerald-600" : ""} />
       <span className="hidden xl:inline">{label}</span>
     </Link>
   );
@@ -58,7 +58,7 @@ export default function Sidebar({ user }: { user: User | null }) {
       <div className="flex flex-col items-center xl:items-start space-y-2">
         {/* Logo */}
         <div className="p-3 mb-4">
-          <span className="font-extrabold text-3xl text-sky-500">
+          <span className="font-extrabold text-3xl text-emerald-500">
             IFconnect
           </span>
         </div>

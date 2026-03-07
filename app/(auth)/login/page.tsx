@@ -257,7 +257,6 @@ export default function LoginPage() {
             size="large"
             text="continue_with"
             width="100%"
-            locale="pt-BR"
           />
         </div>
 

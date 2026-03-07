@@ -54,14 +54,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-900 to-sky-900">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-900 to-emerald-900">
       <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md border border-white/10 dark:border-zinc-800">
         {/* Cabeçalho */}
         <div className="flex flex-col items-center mb-8 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-sky-500/10 dark:bg-sky-500/15 flex items-center justify-center mb-3 border border-sky-500/20">
-            <UserPlus size={26} className="text-sky-600 dark:text-sky-400" />
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 flex items-center justify-center mb-3 border border-emerald-500/20">
+            <UserPlus size={26} className="text-emerald-600 dark:text-emerald-400" />
           </div>
-          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">
             Criar conta
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
@@ -87,7 +87,7 @@ export default function RegisterPage() {
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+                <User className="h-5 w-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
               </div>
               <input
                 type="text"
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Seu nome público"
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all font-medium"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all font-medium"
               />
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function RegisterPage() {
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+                <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
               </div>
               <input
                 type="email"
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu.email@if.edu.br"
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all font-medium"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all font-medium"
               />
             </div>
           </div>
@@ -127,7 +127,7 @@ export default function RegisterPage() {
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+                <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
               </div>
               <input
                 type="password"
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all font-medium"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all font-medium"
               />
             </div>
           </div>
@@ -147,13 +147,13 @@ export default function RegisterPage() {
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <MapPin className="h-5 w-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+                <MapPin className="h-5 w-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
               </div>
               <select
                 required
                 value={campusId}
                 onChange={(e) => setCampusId(e.target.value)}
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all font-medium appearance-none cursor-pointer"
+                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-700 rounded-2xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all font-medium appearance-none cursor-pointer"
               >
                 <option value="" disabled>
                   Selecione sua unidade...
@@ -172,7 +172,7 @@ export default function RegisterPage() {
 
           <button
             disabled={loading}
-            className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
+            className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-400 hover:to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -190,7 +190,7 @@ export default function RegisterPage() {
             Já tem conta?{" "}
             <Link
               href="/login"
-              className="font-bold text-sky-500 hover:text-sky-600 hover:underline decoration-2 underline-offset-2"
+              className="font-bold text-emerald-500 hover:text-emerald-600 hover:underline decoration-2 underline-offset-2"
             >
               Fazer login
             </Link>

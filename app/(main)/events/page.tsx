@@ -81,7 +81,7 @@ export default function EventsPage() {
   if (loading)
     return (
       <div className="p-10 flex justify-center">
-        <Loader2 className="animate-spin text-sky-500" />
+        <Loader2 className="animate-spin text-emerald-500" />
       </div>
     );
 
@@ -90,14 +90,13 @@ export default function EventsPage() {
       {/* Header Fixo */}
       <div className="bg-white dark:bg-zinc-900 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex justify-between items-center">
         <h1 className="font-bold text-xl flex items-center gap-2">
-          <Calendar className="text-sky-500" /> Eventos
+          <Calendar className="text-emerald-500" /> Eventos
         </h1>
 
         {user?.campusId && (
           <button
             onClick={handleOpenCreate}
-            className="bg-sky-500 text-white p-2 rounded-full hover:bg-sky-600 transition shadow-lg shadow-sky-500/20"
-            title="Criar Evento"
+            className="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/20"            title="Criar Evento"
           >
             <Plus size={20} />
           </button>

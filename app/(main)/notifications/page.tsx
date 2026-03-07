@@ -41,7 +41,7 @@ export default function NotificationsPage() {
       case "LIKE":
         return <Heart className="text-pink-500 fill-pink-500" size={24} />;
       case "FOLLOW":
-        return <UserPlus className="text-sky-500 fill-sky-500" size={24} />;
+        return <UserPlus className="text-emerald-500 fill-emerald-500" size={24} />;
       case "COMMENT":
         return (
           <MessageCircle className="text-green-500 fill-green-500" size={24} />
@@ -63,7 +63,7 @@ export default function NotificationsPage() {
   if (loading)
     return (
       <div className="p-10 flex justify-center">
-        <Loader2 className="animate-spin text-sky-500" />
+        <Loader2 className="animate-spin text-emerald-500" />
       </div>
     );
 
@@ -86,7 +86,7 @@ export default function NotificationsPage() {
               className={`p-4 flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors
                                 ${
                                   !n.isRead
-                                    ? "bg-sky-50 dark:bg-sky-900/10"
+                                    ? "bg-emerald-50 dark:bg-emerald-900/10"
                                     : ""
                                 }
                             `}

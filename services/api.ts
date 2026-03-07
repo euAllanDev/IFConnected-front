@@ -24,6 +24,12 @@ export interface Campus {
   name: string;
 }
 
+// ✅ Tipagem correta do retorno do Google (seu backend devolve token + user)
+type GoogleLoginResponse = {
+  token: string;
+  user: User;
+};
+
 export const api = {
   login: (data: LoginRequest) => authService.login(data),
   register: (data: RegisterRequest) => authService.register(data),
@@ -128,35 +134,32 @@ export const api = {
       method: "DELETE",
     }),
 
-    // --- PROJETOS ---
-  getUserProjects: (userId: number) => 
+  // --- PROJETOS ---
+  getUserProjects: (userId: number) =>
     request<Project[]>(`/users/${userId}/projects`),
 
-  createProject: (formData: FormData) => 
+  createProject: (formData: FormData) =>
     request<Project>("/projects", {
       method: "POST",
-      body: formData
+      body: formData,
     }),
 
-  deleteProject: (id: number) => 
+  deleteProject: (id: number) =>
     request<void>(`/projects/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
     }),
 
-    // PUT /api/projects/{id}
-  updateProject: (id: number, formData: FormData) => 
+  // PUT /api/projects/{id}
+  updateProject: (id: number, formData: FormData) =>
     request<Project>(`/projects/${id}`, {
       method: "PUT",
-      body: formData
+      body: formData,
     }),
 
-
-
-     loginGoogle: (token: string) => 
-      request<{ token: string }>("/auth/google", { 
-          method: "POST", 
-          body: JSON.stringify({ token }) 
-      }),
-  // ...
+  // ✅ CORRIGIDO: agora o tipo bate com o backend (token + user)
+  loginGoogle: (token: string) =>
+    request<GoogleLoginResponse>("/auth/google", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    }),
 };
-

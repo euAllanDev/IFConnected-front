@@ -94,7 +94,7 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
     >
       <div className="flex gap-3">
         {/* ✅ Avatar real */}
-        <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500 flex items-center justify-center font-bold text-sky-600 dark:text-white shrink-0 overflow-hidden relative">
+        <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500 flex items-center justify-center font-bold text-emerald-600 dark:text-white shrink-0 overflow-hidden relative">
           {currentUser?.profileImageUrl ? (
             <Image
               src={currentUser.profileImageUrl}
@@ -142,7 +142,7 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-sky-500 hover:text-sky-600 transition-colors"
+              className="text-emerald-500 hover:text-emerald-600 transition-colors"
             >
               <ImageIcon size={20} />
               <input
@@ -157,7 +157,7 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
             <button
               type="submit"
               disabled={loading || (!content.trim() && !imageFile)}
-              className="bg-sky-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-sky-500 cursor-pointer transition disabled:opacity-50 flex items-center gap-2"
+              className="bg-emerald-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-emerald-500 cursor-pointer transition disabled:opacity-50 flex items-center gap-2"
             >
               {loading ? <Loader2 size={16} className="animate-spin" /> : "Publicar"}
             </button>
