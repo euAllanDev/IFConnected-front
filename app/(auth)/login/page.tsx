@@ -80,7 +80,7 @@ export default function LoginPage() {
   useEffect(() => {
     let isMounted = true; 
     const randomNum = Math.floor(Math.random() * 1000);
-    const imageUrl = `https://loremflickr.com/1920/1080/white,nature?random=${randomNum}`;
+    const imageUrl = `https://loremflickr.com/1920/1080/white?random=${randomNum}`;
 
     const img = new Image();
     img.src = imageUrl;

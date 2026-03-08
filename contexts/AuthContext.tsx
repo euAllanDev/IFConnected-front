@@ -41,7 +41,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isAuthRoute = 
       pathname.includes("/login") || 
       pathname.includes("/register") || 
-      pathname.includes("/apresentation"); // <-- NOVO
+      pathname.includes("/apresentation") ||
+      pathname.includes("/infoEnterprise");
+    
 
     const isCompleteProfile = pathname.includes("/complete-profile");
 
