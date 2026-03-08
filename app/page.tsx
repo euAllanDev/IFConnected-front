@@ -10,17 +10,16 @@ export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Só toma decisão quando terminar de carregar o usuário do localStorage
     if (!isLoading) {
       if (user) {
-        // Se tem usuário, manda para o Feed (Home Logada)
+        // Se tem usuário logado, manda para o Feed
         router.replace("/feed");
       } else {
-        // Se não tem, manda para o Login
-        router.replace("/login");
+        // 🚀 MUDANÇA AQUI: Se NÃO tem login, manda para a Apresentação
+        router.replace("/apresentation"); 
       }
     }
-  }, [user, isLoading, router]);
+  },[user, isLoading, router]);
 
   // Enquanto decide, mostra um loading centralizado
   return (

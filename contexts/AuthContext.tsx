@@ -37,7 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isLoading) return; // Espera carregar
 
-    const isAuthRoute = pathname.includes("/login") || pathname.includes("/register");
+    // Adicionamos o /apresentation como uma rota onde "não logados" podem ficar
+    const isAuthRoute = 
+      pathname.includes("/login") || 
+      pathname.includes("/register") || 
+      pathname.includes("/apresentation"); // <-- NOVO
+
     const isCompleteProfile = pathname.includes("/complete-profile");
 
     if (user) {
@@ -46,17 +51,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Se não tem campus e não está na tela de completar, FORÇA ir pra lá
         router.push("/complete-profile");
       } else if (user.campusId && (isAuthRoute || isCompleteProfile)) {
-        // Se já tem campus e tenta acessar Login ou Complete, manda pro Feed
+        // Se já tem campus e tenta acessar Login, Register ou Apresentation, manda pro Feed
         router.push("/feed");
       }
     } else {
       // USUÁRIO NÃO LOGADO:
       if (!isAuthRoute) {
-        router.push("/login"); // Expulsa para o login se tentar acessar rotas privadas
+        // 🚀 MUDANÇA AQUI: Expulsa para a apresentação se tentar acessar rotas privadas
+        router.push("/apresentation"); 
       }
     }
   }, [user, isLoading, pathname, router]);
-
   const login = (userData: User) => {
     setUser(userData);
     localStorage.setItem("ifconnected:user", JSON.stringify(userData));
@@ -67,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("ifconnected:user");
     localStorage.removeItem("ifconnected:token");
-    router.push("/login");
+    router.push("/apresentation");
   };
 
   return (

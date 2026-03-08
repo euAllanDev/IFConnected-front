@@ -17,12 +17,12 @@ export default function MainLayout({
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    // Redireciona para o login se não estiver autenticado e o carregamento terminou
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login");
-    }
-  }, [isAuthenticated, isLoading, router]);
+  // useEffect(() => {
+  //   // Redireciona para o login se não estiver autenticado e o carregamento terminou
+  //   if (!isLoading && !isAuthenticated) {
+  //     router.push("/login");
+  //   }
+  // }, [isAuthenticated, isLoading, router]);
 
   // Tela de Loading enquanto verifica Auth
   if (isLoading || !isAuthenticated) {
