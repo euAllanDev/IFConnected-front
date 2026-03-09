@@ -111,7 +111,7 @@ export function ProjectModal({ isOpen, onClose, userId, onSuccess, projectToEdit
                 onChange={e => setImage(e.target.files?.[0] || null)} 
              />
              <div className="flex flex-col items-center gap-2">
-                <Upload className="text-slate-400 group-hover:text-sky-500 transition" size={32} />
+                <Upload className="text-slate-400 group-hover:text-emerald-500 transition" size={32} />
                 <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                     {image 
                       ? image.name 
@@ -126,7 +126,7 @@ export function ProjectModal({ isOpen, onClose, userId, onSuccess, projectToEdit
             <input 
               placeholder="Título do Projeto" 
               required
-              className="w-full bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-sky-500 outline-none transition text-sm"
+              className="w-full bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-emerald-500 outline-none transition text-sm"
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value})}
             />
@@ -135,14 +135,14 @@ export function ProjectModal({ isOpen, onClose, userId, onSuccess, projectToEdit
               placeholder="Descrição do projeto..." 
               required
               rows={3}
-              className="w-full bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-sky-500 outline-none transition text-sm resize-none"
+              className="w-full bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-emerald-500 outline-none transition text-sm resize-none"
               value={formData.description}
               onChange={e => setFormData({...formData, description: e.target.value})}
             />
 
             <input 
               placeholder="Tecnologias (ex: Java, Spring, React) - Separe por vírgula" 
-              className="w-full bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-sky-500 outline-none transition text-sm"
+              className="w-full bg-slate-50 dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-emerald-500 outline-none transition text-sm"
               value={formData.technologies}
               onChange={e => setFormData({...formData, technologies: e.target.value})}
             />
@@ -152,7 +152,7 @@ export function ProjectModal({ isOpen, onClose, userId, onSuccess, projectToEdit
                  <LinkIcon size={16} className="absolute left-3 top-3.5 text-slate-400" />
                  <input 
                   placeholder="Link GitHub" 
-                  className="w-full bg-slate-50 dark:bg-slate-950 p-3 pl-10 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-sky-500 outline-none transition text-sm"
+                  className="w-full bg-slate-50 dark:bg-slate-950 p-3 pl-10 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-emerald-500 outline-none transition text-sm"
                   value={formData.githubUrl}
                   onChange={e => setFormData({...formData, githubUrl: e.target.value})}
                 />
@@ -160,7 +160,7 @@ export function ProjectModal({ isOpen, onClose, userId, onSuccess, projectToEdit
                <div className="relative">
                  <input 
                   placeholder="Link Demo (Site)" 
-                  className="w-full bg-slate-50 dark:bg-slate-950 p-3 pl-10 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-sky-500 outline-none transition text-sm"
+                  className="w-full bg-slate-50 dark:bg-slate-950 p-3 pl-10 rounded-lg border border-slate-200 dark:border-slate-800 focus:border-emerald-500 outline-none transition text-sm"
                   value={formData.demoUrl}
                   onChange={e => setFormData({...formData, demoUrl: e.target.value})}
                 />
@@ -171,7 +171,7 @@ export function ProjectModal({ isOpen, onClose, userId, onSuccess, projectToEdit
           <button 
             type="submit"
             disabled={loading} 
-            className="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg flex justify-center gap-2 transition disabled:opacity-50"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg flex justify-center gap-2 transition disabled:opacity-50"
           >
             {loading && <Loader2 className="animate-spin" />} {projectToEdit ? "Salvar Alterações" : "Criar Projeto"}
           </button>

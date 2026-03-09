@@ -99,7 +99,7 @@ export default function RegionalPage() {
   if (loading) {
     return (
       <div className="p-10 flex justify-center">
-        <Loader2 className="animate-spin text-sky-500" size={32} />
+        <Loader2 className="animate-spin text-emerald-500" size={32} />
       </div>
     );
   }
@@ -120,7 +120,7 @@ export default function RegionalPage() {
         </p>
         <button
           onClick={() => router.push(`/profile/${user.id}`)}
-          className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
+          className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
         >
           Editar Perfil e Escolher Campus
         </button>
@@ -133,7 +133,7 @@ export default function RegionalPage() {
       {/* Header */}
       <div className="bg-white dark:bg-zinc-900 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
         <h1 className="font-bold text-xl flex items-center gap-2 text-slate-900 dark:text-white">
-          <MapPin className="text-sky-500" /> Campus & Região
+          <MapPin className="text-emerald-500" /> Campus & Região
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
           Atividades em um raio de 50km
@@ -145,7 +145,7 @@ export default function RegionalPage() {
         <div className="bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-slate-800 p-4 mb-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-sm uppercase tracking-wider">
-              <Users size={16} className="text-sky-500" /> Pessoas Próximas
+              <Users size={16} className="text-emerald-500" /> Pessoas Próximas
             </h2>
 
             {/* Controles de Navegação */}
@@ -178,7 +178,7 @@ export default function RegionalPage() {
             {currentItems.map((suggestion) => (
               <div
                 key={suggestion.id}
-                className="bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col items-center justify-between transition-all hover:border-sky-200 dark:hover:border-sky-900 h-full"
+                className="bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col items-center justify-between transition-all hover:border-emerald-200 dark:hover:border-emerald-900 h-full"
               >
                 <div className="flex flex-col items-center w-full">
                   {/* Avatar */}
@@ -218,7 +218,7 @@ export default function RegionalPage() {
                 {/* Botão Seguir */}
                 <button
                   onClick={() => handleFollowSuggestion(suggestion.id)}
-                  className="w-full py-1.5 px-3 bg-white dark:bg-black border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-bold rounded-full hover:bg-sky-50 dark:hover:bg-slate-900 hover:text-sky-600 hover:border-sky-200 transition flex items-center justify-center gap-1"
+                  className="w-full py-1.5 px-3 bg-white dark:bg-black border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-bold rounded-full hover:bg-emerald-50 dark:hover:bg-slate-900 hover:text-emerald-600 hover:border-emerald-200 transition flex items-center justify-center gap-1"
                 >
                   <UserPlus size={14} /> Seguir
                 </button>

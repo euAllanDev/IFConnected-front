@@ -32,7 +32,7 @@ export default function PostPage() {
   if (loading)
     return (
       <div className="p-10 flex justify-center">
-        <Loader2 className="animate-spin text-sky-500" />
+        <Loader2 className="animate-spin text-emerald-500" />
       </div>
     );
   if (!post || !user)

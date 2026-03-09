@@ -43,11 +43,11 @@ export function SugestoesBar() {
   return (
     <div className="w-full bg-slate-50 dark:bg-zinc-700/10 p-4 rounded-xl sticky top-4">
       <h3 className="font-extrabold text-xl mb-4 text-slate-900 dark:text-slate-50 flex items-center gap-2">
-        <Zap size={20} className="text-sky-500" /> Quem Seguir
+        <Zap size={20} className="text-emerald-500" /> Quem Seguir
       </h3>
 
       {loading ? (
-        <Loader2 className="animate-spin text-sky-500 mx-auto" size={24} />
+        <Loader2 className="animate-spin text-emerald-500 mx-auto" size={24} />
       ) : suggestions.length === 0 ? (
         <p className="text-slate-500 text-sm">Nenhuma sugestão por perto.</p>
       ) : (
@@ -58,7 +58,7 @@ export function SugestoesBar() {
                 className="flex items-center gap-3 cursor-pointer"
                 onClick={() => router.push(`/profile/${s.id}`)}
               >
-                <div className="w-10 h-10 bg-sky-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-sky-600 dark:text-slate-200">
+                <div className="w-10 h-10 bg-emerald-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-emerald-600 dark:text-slate-200">
                   {s.username[0].toUpperCase()}
                 </div>
                 <div>
@@ -70,7 +70,7 @@ export function SugestoesBar() {
               </div>
               <button
                 onClick={() => handleFollow(s.id)}
-                className="bg-black dark:bg-sky-500 text-white px-4 py-1.5 rounded-full font-bold text-sm hover:opacity-90 transition"
+                className="bg-black dark:bg-emerald-500 text-white px-4 py-1.5 rounded-full font-bold text-sm hover:opacity-90 transition"
               >
                 Seguir
               </button>

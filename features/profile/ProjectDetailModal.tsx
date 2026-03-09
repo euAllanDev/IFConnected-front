@@ -50,7 +50,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }: ProjectDetailMo
           {project.technologies && project.technologies.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
               {project.technologies.map((tech) => (
-                <span key={tech} className="px-3 py-1 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 rounded-full text-sm font-medium">
+                <span key={tech} className="px-3 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded-full text-sm font-medium">
                   {tech}
                 </span>
               ))}

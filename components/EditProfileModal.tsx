@@ -143,7 +143,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-sky-500 outline-none"
+                  className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
                   required
                 />
               </div>
@@ -155,7 +155,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-sky-500 outline-none resize-none h-24"
+                  className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
                   placeholder="Sobre você..."
                   maxLength={160}
                 />
@@ -175,7 +175,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-full font-bold text-white bg-black dark:bg-sky-500 hover:opacity-80 transition-opacity flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-2.5 rounded-full font-bold text-white bg-black dark:bg-emerald-500 hover:opacity-80 transition-opacity flex items-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 size={18} className="animate-spin" />

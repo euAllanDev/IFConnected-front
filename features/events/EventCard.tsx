@@ -80,7 +80,7 @@ export function EventCard({
             <h3 className="font-bold text-lg text-slate-900 dark:text-white leading-tight">
               {event.title}
             </h3>
-            <p className="text-sm text-sky-600 font-medium mt-1 capitalize">
+            <p className="text-sm text-emerald-600 font-medium mt-1 capitalize">
               {format(date, "EEEE, HH:mm", { locale: ptBR })}
             </p>
           </div>
@@ -92,7 +92,7 @@ export function EventCard({
               <div className="flex gap-1 mr-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => onEdit(event)}
-                  className="p-2 text-slate-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-slate-800 rounded-full transition"
+                  className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-full transition"
                   title="Editar"
                 >
                   <Edit size={18} />

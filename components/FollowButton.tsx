@@ -50,7 +50,7 @@ export default function FollowButton({
           ${
             isFollowing
               ? "text-green-600 hover:text-red-600"
-              : "text-sky-500 hover:text-sky-600"
+              : "text-emerald-500 hover:text-emerald-600"
           }`}
       >
         {isLoading ? (

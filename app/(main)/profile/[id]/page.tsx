@@ -130,7 +130,7 @@ export default function ProfilePage() {
   };
 
   // ... (Verificações de Loading e Null iguais) ...
-  if (loading) return <div className="p-10 text-center"><Loader2 className="animate-spin text-sky-500 mx-auto" size={32} /></div>;
+  if (loading) return <div className="p-10 text-center"><Loader2 className="animate-spin text-emerald-500 mx-auto" size={32} /></div>;
   if (!profileData) return <div className="p-10 text-center">Perfil não encontrado.</div>;
   if (!currentUser) return null;
   const isOwnProfile = currentUser.id === profileId;
@@ -183,10 +183,10 @@ export default function ProfilePage() {
       {/* ABAS */}
       <div className="mt-0">
         <div className="flex border-b border-slate-200 dark:border-slate-800">
-          <button onClick={() => setActiveTab("posts")} className={`flex-1 px-4 py-3 font-bold text-sm transition flex items-center justify-center gap-2 ${activeTab === "posts" ? "text-slate-900 dark:text-white border-b-4 border-sky-500" : "text-slate-500"}`}>
+          <button onClick={() => setActiveTab("posts")} className={`flex-1 px-4 py-3 font-bold text-sm transition flex items-center justify-center gap-2 ${activeTab === "posts" ? "text-slate-900 dark:text-white border-b-4 border-emerald-500" : "text-slate-500"}`}>
             <Grid size={16} /> Publicações
           </button>
-          <button onClick={() => setActiveTab("projects")} className={`flex-1 px-4 py-3 font-bold text-sm transition flex items-center justify-center gap-2 ${activeTab === "projects" ? "text-slate-900 dark:text-white border-b-4 border-sky-500" : "text-slate-500"}`}>
+          <button onClick={() => setActiveTab("projects")} className={`flex-1 px-4 py-3 font-bold text-sm transition flex items-center justify-center gap-2 ${activeTab === "projects" ? "text-slate-900 dark:text-white border-b-4 border-emerald-500" : "text-slate-500"}`}>
             <FolderGit2 size={16} /> Projetos
           </button>
         </div>
@@ -203,7 +203,7 @@ export default function ProfilePage() {
                 {isOwnProfile && (
                      <button 
                         onClick={openCreateModal} // Chama a função que limpa o estado
-                        className="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 text-slate-500 hover:border-sky-500 hover:text-sky-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition flex flex-col items-center justify-center gap-2 font-bold"
+                        className="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 text-slate-500 hover:border-emerald-500 hover:text-emerald-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition flex flex-col items-center justify-center gap-2 font-bold"
                     >
                         <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full"><Plus size={24} /></div>
                         Adicionar Novo Projeto

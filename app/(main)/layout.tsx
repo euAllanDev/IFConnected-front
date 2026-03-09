@@ -28,7 +28,7 @@ export default function MainLayout({
   if (isLoading || !isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center bg-white dark:bg-black transition-colors">
-        <Loader2 className="animate-spin text-sky-500" size={32} />
+        <Loader2 className="animate-spin text-emerald-500" size={32} />
       </div>
     );
   }

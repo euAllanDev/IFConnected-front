@@ -24,7 +24,7 @@ export default function RootPage() {
   // Enquanto decide, mostra um loading centralizado
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-      <Loader2 className="animate-spin text-sky-500" size={40} />
+      <Loader2 className="animate-spin text-emerald-500" size={40} />
     </div>
   );
 }
