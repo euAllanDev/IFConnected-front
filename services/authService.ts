@@ -1,37 +1,45 @@
 import { request } from "./apiClient";
 import { User, LoginRequest, RegisterRequest } from "@/types";
 
+// Esta interface deve bater com o JSON que o seu IfConnectedController.login retorna
 interface LoginResponse {
   token: string;
-  userId: number;
-  username: string;
+  user: User; // O Controller atual retorna um UserResponseDTO (que é compatível com User)
 }
 
 export const authService = {
   login: async (data: LoginRequest) => {
-    const response = await request<LoginResponse>("/auth/login", {
+    // 1. Faz o login (CHAMA /api/login)
+    const response = await request<LoginResponse>("/login", {
       method: "POST",
       body: JSON.stringify(data),
     });
 
-    if (typeof window !== "undefined") {
+    // 2. Salva o token se existir
+    if (typeof window !== "undefined" && response.token) {
       localStorage.setItem("ifconnected:token", response.token);
-      localStorage.setItem("ifconnected:userId", response.userId.toString());
+      localStorage.setItem("ifconnected:userId", response.user.id.toString());
+      localStorage.setItem("ifconnected:user", JSON.stringify(response.user));
     }
 
-    // 🔹 BUSCA O USUÁRIO COMPLETO
-    const user = await request<User>(`/users/${response.userId}`);
-
-    localStorage.setItem("ifconnected:user", JSON.stringify(user));
-
-    return user;
+    // 3. Retorna o usuário que veio na resposta
+    return response.user;
   },
 
-  register: (data: RegisterRequest) =>
-    request<void>("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+  register: async (data: RegisterRequest) => {
+    // 1. Cria o usuário (CHAMA /api/users)
+    const user = await request<User>("/users", { 
+      method: "POST", 
+      body: JSON.stringify(data) 
+    });
+    
+    // 2. Opcional: já loga o usuário automaticamente se o back retornar o user
+    if (typeof window !== "undefined") {
+        localStorage.setItem("ifconnected:user", JSON.stringify(user));
+    }
+    
+    return user;
+  },
 
   getMe: (id: number) => request<User>(`/users/${id}`),
 };

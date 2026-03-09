@@ -77,29 +77,29 @@ export default function LoginPage() {
   const [isAppLoading, setIsAppLoading] = useState(true);
 
   // Busca e pré-carrega a imagem aleatória
-  useEffect(() => {
-    let isMounted = true; 
-    const randomNum = Math.floor(Math.random() * 1000);
-    const imageUrl = `https://loremflickr.com/1920/1080/white?random=${randomNum}`;
+useEffect(() => {
+  let isMounted = true;
 
-    const img = new Image();
-    img.src = imageUrl;
+  const imageUrl = "https://loremflickr.com/1920/1080/white";
 
-    img.onload = () => {
-      if (isMounted) {
-        setBgImage(imageUrl);
-        setIsAppLoading(false);
-      }
-    };
+  const img = new Image();
+  img.src = imageUrl;
 
-    img.onerror = () => {
-      if (isMounted) setIsAppLoading(false);
-    };
+  img.onload = () => {
+    if (isMounted) {
+      setBgImage(img.src); // importante usar img.src
+      setIsAppLoading(false);
+    }
+  };
 
-    return () => {
-      isMounted = false;
-    };
-  },[]);
+  img.onerror = () => {
+    if (isMounted) setIsAppLoading(false);
+  };
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
 
  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,7 +167,7 @@ export default function LoginPage() {
       <div className="relative z-10 bg-white/40 dark:bg-black/40 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] w-full max-w-md border border-white/40 dark:border-white/10 transition-all flex-shrink-0 animate-in fade-in zoom-in duration-500">
         
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 mb-2 drop-shadow-sm">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50 mb-2 drop-shadow-sm">
             IFconnected
           </h1>
           <p className="text-slate-800 dark:text-slate-200 font-bold drop-shadow-sm">

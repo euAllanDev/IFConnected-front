@@ -8,7 +8,7 @@ export function LandingNav() {
       {/* Logo */}
       <div className="flex items-center gap-2">
         <Link href="/apresentation">
-          <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500 drop-shadow-lg cursor-pointer hover:opacity-80 transition-opacity">
+          <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white drop-shadow-lg cursor-pointer hover:opacity-80 transition-opacity">
             IFConnected
           </span>
         </Link>

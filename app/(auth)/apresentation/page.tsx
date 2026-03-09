@@ -59,7 +59,7 @@ export default function InfoEnterprisePage() {
           <div className="w-full lg:w-1/2 space-y-6">
             <h2 className="text-green-600 dark:text-green-400 font-bold tracking-widest uppercase text-sm">O Propósito</h2>
             <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight">
-              Eliminando as barreiras entre os campi.
+              Eliminando as barreiras entre os campus.
             </h3>
             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
               O IFConnected nasceu da necessidade de integrar alunos de diferentes turmas e unidades. Muitas vezes, projetos incríveis e eventos importantes ficam restritos às paredes de uma única sala de aula.
