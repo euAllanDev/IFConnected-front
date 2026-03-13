@@ -8,6 +8,8 @@ import {
   LogOut,
   Bell,
   Calendar,
+  Briefcase,
+  ClipboardList
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle"; // Se não usar, pode remover
 import { useAuth } from "@/contexts/AuthContext";
@@ -67,6 +69,20 @@ export default function Sidebar({ user }: { user: User | null }) {
         <NavItem href="/regional" icon={MapPin} label="Campus & Perto" />
         <NavItem href="/notifications" icon={Bell} label="Notificações" />
         <NavItem href="/events" icon={Calendar} label="Eventos" />
+
+        {/* --- LINKS DE VAGAS --- */}
+        <NavItem href="/jobs" icon={Briefcase} label="Oportunidades" />
+        
+        {/* Só aluno vê suas candidaturas */}
+        {user.role === 'STUDENT' && (
+           <NavItem href="/my-applications" icon={ClipboardList} label="Minhas Candidaturas" />
+        )}
+
+        {/* Só Empresa/Admin vê o painel de gestão */}
+        {(user.role === 'COMPANY' || user.role === 'ADMIN') && (
+           <NavItem href="/manage-jobs" icon={Briefcase} label="Gerenciar Vagas" />
+        )}
+
         
         {/* 2. PROTEÇÃO DE LINK: Só cria o link se tiver userId */}
         <NavItem 

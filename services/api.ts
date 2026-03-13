@@ -2,6 +2,7 @@
 
 import { authService } from "./authService";
 import { postService } from "./postService";
+import { jobService } from "./jobService";
 import {
   User,
   LoginRequest,
@@ -10,6 +11,11 @@ import {
   Event,
   CreateEventRequest,
   Project,
+  Job, 
+  JobApplication, 
+  JobApplyRequest, 
+  JobStatusUpdateRequest,
+  DashboardDTO
 } from "@/types";
 import { request } from "./apiClient";
 
@@ -162,4 +168,21 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ token }),
     }),
+
+  getAllJobs: () => jobService.getAllJobs(),
+  
+  createJob: (userId: number, jobData: Partial<Job>) => jobService.createJob(userId, jobData),
+  
+  applyToJob: (jobId: number, data: JobApplyRequest) => jobService.applyToJob(jobId, data),
+  
+  getMyApplications: (userId: number) => jobService.getMyApplications(userId),
+  
+  getJobCandidates: (jobId: number, companyId: number) => jobService.getJobCandidates(jobId, companyId),
+  
+  updateApplicationStatus: (applicationId: number, data: JobStatusUpdateRequest) => jobService.updateApplicationStatus(applicationId, data),
+  
+  getCompanyJobs: (companyId: number) => jobService.getCompanyJobs(companyId),
+
+  getDashboard: (userId: number) => 
+    request<DashboardDTO>(`/admin/dashboard?userId=${userId}`),
 };

@@ -9,7 +9,6 @@ interface LoginResponse {
 
 export const authService = {
   login: async (data: LoginRequest) => {
-    // 1. Faz o login (CHAMA /api/login)
     const response = await request<LoginResponse>("/login", {
       method: "POST",
       body: JSON.stringify(data),
