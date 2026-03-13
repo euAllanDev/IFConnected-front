@@ -46,10 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isCompleteProfile = pathname.includes("/complete-profile");
   const isAdminRoute = pathname.startsWith("/admin"); // ← novo
 
+  const needsCampus = user?.role === "STUDENT" || !user?.role;
+  
   if (user) {
-    if (!user.campusId && !isCompleteProfile && !isAdminRoute) {
+    if (needsCampus && !user.campusId && !isCompleteProfile && !isAdminRoute) {
       router.push("/complete-profile");
-    } else if (user.campusId && (isAuthRoute || isCompleteProfile) && !isAdminRoute) {
+    } else if ((isAuthRoute || isCompleteProfile) && !isAdminRoute) {
       router.push("/feed");
     }
   } else {

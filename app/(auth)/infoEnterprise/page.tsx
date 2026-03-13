@@ -17,6 +17,7 @@ export default function infoEnterprisePage() {
       {/* --- HERO SECTION (RESUMO DA REDE) --- */}
       <main className="relative z-10 pt-32 pb-20 px-6 lg:px-20 max-w-7xl mx-auto text-center">
         
+  
         {/* Badge superior */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 font-medium text-sm mb-8 border border-emerald-500/20">
           <Building2 size={16} /> Soluções para Recrutamento
