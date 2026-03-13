@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response: any = await api.login({ email: formData.email, password: formData.password });
+      const response: any = await api.adminLogin({ email: formData.email, password: formData.password });
       login(response.user); // Seta no contexto
       
       // O Login é quem redireciona, não o useEffect!

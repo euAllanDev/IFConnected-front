@@ -185,4 +185,17 @@ export const api = {
 
   getDashboard: (userId: number) => 
     request<DashboardDTO>(`/admin/dashboard?userId=${userId}`),
+
+  adminLogin: async (data: LoginRequest) => {
+  const response = await request<{token: string, user: User}>("/admin/login", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  if (typeof window !== "undefined" && response.token) {
+    localStorage.setItem("ifconnected:token", response.token);
+    localStorage.setItem("ifconnected:userId", response.user.id.toString());
+    localStorage.setItem("ifconnected:user", JSON.stringify(response.user));
+  }
+  return response;
+}
 };

@@ -35,35 +35,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // 2. VIGILANTE DE ROTAS (Aqui a mágica acontece)
   useEffect(() => {
-    if (isLoading) return; // Espera carregar
+  if (isLoading) return;
 
-    // Adicionamos o /apresentation como uma rota onde "não logados" podem ficar
-    const isAuthRoute = 
-      pathname.includes("/login") || 
-      pathname.includes("/register") || 
-      pathname.includes("/apresentation") ||
-      pathname.includes("/infoEnterprise");
-    
+  const isAuthRoute = 
+    pathname.includes("/login") || 
+    pathname.includes("/register") || 
+    pathname.includes("/apresentation") ||
+    pathname.includes("/infoEnterprise");
 
-    const isCompleteProfile = pathname.includes("/complete-profile");
+  const isCompleteProfile = pathname.includes("/complete-profile");
+  const isAdminRoute = pathname.startsWith("/admin"); // ← novo
 
-    if (user) {
-      // USUÁRIO LOGADO:
-      if (!user.campusId && !isCompleteProfile) {
-        // Se não tem campus e não está na tela de completar, FORÇA ir pra lá
-        router.push("/complete-profile");
-      } else if (user.campusId && (isAuthRoute || isCompleteProfile)) {
-        // Se já tem campus e tenta acessar Login, Register ou Apresentation, manda pro Feed
-        router.push("/feed");
-      }
-    } else {
-      // USUÁRIO NÃO LOGADO:
-      if (!isAuthRoute) {
-        // 🚀 MUDANÇA AQUI: Expulsa para a apresentação se tentar acessar rotas privadas
-        router.push("/apresentation"); 
-      }
+  if (user) {
+    if (!user.campusId && !isCompleteProfile && !isAdminRoute) {
+      router.push("/complete-profile");
+    } else if (user.campusId && (isAuthRoute || isCompleteProfile) && !isAdminRoute) {
+      router.push("/feed");
     }
-  }, [user, isLoading, pathname, router]);
+  } else {
+    if (!isAuthRoute && !isAdminRoute) {
+      router.push("/apresentation");
+    }
+  }
+}, [user, isLoading, pathname, router]);
+
   const login = (userData: User) => {
     setUser(userData);
     localStorage.setItem("ifconnected:user", JSON.stringify(userData));
