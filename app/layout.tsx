@@ -1,9 +1,12 @@
 import { AuthProvider } from "@/contexts/AuthContext";
 import NextThemeProvider from "@/contexts/ThemeProvider";
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
 // 1. Import do Provider do Google
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className={`${inter.className} antialiased`}>
         {/* 2. Envolve a aplicação com o Client ID do Google */}
         <GoogleOAuthProvider clientId="541656136687-dj7v9udsuodhv8okd4a74n9rkfhfcvda.apps.googleusercontent.com">

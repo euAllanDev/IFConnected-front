@@ -7,6 +7,5 @@ export default function NextThemeProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // O Next-Themes cuida de salvar no LocalStorage e aplicar as classes
   return <ThemeProvider attribute="class">{children}</ThemeProvider>;
 }

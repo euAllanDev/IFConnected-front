@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // 1. Carrega o usuário ao iniciar o app
   useEffect(() => {
     const storedUser = localStorage.getItem("ifconnected:user");
     if (storedUser) {
@@ -33,16 +32,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   },[]);
   
-  // 2. VIGILANTE DE ROTAS (Aqui a mágica acontece)
+  // VIGILANTE DE ROTAS 
   useEffect(() => {
     if (isLoading) return; // Espera carregar
 
-    // Adicionamos o /apresentation como uma rota onde "não logados" podem ficar
+    
     const isAuthRoute = 
       pathname.includes("/login") || 
       pathname.includes("/register") || 
       pathname.includes("/apresentation") ||
       pathname.includes("/infoEnterprise");
+      
     
 
     const isCompleteProfile = pathname.includes("/complete-profile");
@@ -57,9 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         router.push("/feed");
       }
     } else {
-      // USUÁRIO NÃO LOGADO:
+     
       if (!isAuthRoute) {
-        // 🚀 MUDANÇA AQUI: Expulsa para a apresentação se tentar acessar rotas privadas
         router.push("/apresentation"); 
       }
     }
@@ -67,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (userData: User) => {
     setUser(userData);
     localStorage.setItem("ifconnected:user", JSON.stringify(userData));
-    // Removemos o router.push("/feed") daqui! O useEffect acima fará o redirecionamento automático!
   };
 
   const logout = () => {
