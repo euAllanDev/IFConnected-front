@@ -1,119 +1,283 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
-  User as UserIcon,
+  User,
   MapPin,
   LogOut,
   Bell,
   Calendar,
+  Menu,
+  X,
 } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle"; // Se não usar, pode remover
 import { useAuth } from "@/contexts/AuthContext";
-import { User } from "../../types/index";
+import { User as UserType } from "@/types";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import ThemeToggle from "@/components/ThemeToggle";
+import { Separator } from "@/components/ui/separator";
 
-// Componente para um Item de Navegação (Reaproveitável)
-const NavItem = ({
-  href,
-  icon: Icon,
-  label,
-}: {
-  href: string;
-  icon: any;
-  label: string;
-}) => {
-  const pathname = usePathname();
-  const isActive = pathname === href || (href === "/feed" && pathname === "/");
+const navItems = [
+  { href: "/feed", icon: Home, label: "Feed Principal" },
+  { href: "/regional", icon: MapPin, label: "Campus & Perto" },
+  { href: "/notifications", icon: Bell, label: "Notificações" },
+  { href: "/events", icon: Calendar, label: "Eventos" },
+];
 
-  return (
-    <Link
-      href={href}
-      className={`flex items-center gap-4 p-3 rounded-full transition-colors font-bold text-lg w-fit xl:w-full ${
-        isActive
-          ? "text-emerald-700"
-          : "text-slate-900 dark:text-slate-50 hover:bg-slate-100 dark:hover:bg-emerald-700/20"
-      }`}
-    >
-      <Icon size={26} className={isActive ? "text-emerald-600" : ""} />
-      <span className="hidden xl:inline">{label}</span>
-    </Link>
-  );
-};
+interface SidebarProps {
+  user: UserType | null;
+}
 
-// Adicionei 'User | null' para o TypeScript não reclamar se vier vazio
-export default function Sidebar({ user }: { user: User | null }) {
+export default function Sidebar({ user }: SidebarProps) {
   const { logout } = useAuth();
+  const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // 1. PROTEÇÃO DE ID:
-  // Se user for nulo, userId vira undefined (não quebra a tela)
+  if (!user) return null;
+
   const userId = user?.id;
+  const isActive = (href: string) =>
+    pathname === href || (href === "/feed" && pathname === "/");
 
-  // Se o usuário não existir ainda, retornamos null ou um esqueleto simples
-  // para evitar erros de renderização
-  if (!user) return null; 
+  const NavLink = ({
+    href,
+    icon: Icon,
+    label,
+    isMobile = false,
+  }: {
+    href: string;
+    icon: any;
+    label: string;
+    isMobile?: boolean;
+  }) => {
+    const active = isActive(href);
+
+    if (isMobile) {
+      return (
+        <Link
+          href={href}
+          onClick={() => setMobileMenuOpen(false)}
+          className={cn(
+            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all",
+            active
+              ? "bg-primary/10 text-primary font-semibold"
+              : "text-foreground hover:bg-accent"
+          )}
+        >
+          <Icon size={22} className={cn(active && "text-primary")} />
+          <span>{label}</span>
+        </Link>
+      );
+    }
+
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            href={href}
+            className={cn(
+              "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group",
+              "hover:bg-accent",
+              active
+                ? "font-bold text-primary bg-primary/5"
+                : "text-foreground font-medium"
+            )}
+          >
+            <Icon
+              size={26}
+              className={cn(
+                "transition-colors",
+                active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+              )}
+            />
+            <span className="hidden xl:inline text-lg">{label}</span>
+            {active && (
+              <div className="absolute left-0 w-1 h-8 bg-primary rounded-r-full hidden xl:block" />
+            )}
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="xl:hidden">
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
 
   return (
-    <aside className="w-[275px] hidden md:flex flex-col p-4 fixed h-screen z-20">
-      <div className="flex flex-col items-center xl:items-start space-y-2">
-        {/* Logo */}
-        <div className="p-3 mb-4">
-          <span className="font-extrabold text-3xl text-emerald-500">
-            IFconnect
-          </span>
-        </div>
-        
-        <NavItem href="/feed" icon={Home} label="Feed Principal" />
-        <NavItem href="/regional" icon={MapPin} label="Campus & Perto" />
-        <NavItem href="/notifications" icon={Bell} label="Notificações" />
-        <NavItem href="/events" icon={Calendar} label="Eventos" />
-        
-        {/* 2. PROTEÇÃO DE LINK: Só cria o link se tiver userId */}
-        <NavItem 
-          href={userId ? `/profile/${userId}` : "#"} 
-          icon={UserIcon} 
-          label="Perfil" 
-        />
-      </div>
+    <>
+      {/* Desktop Sidebar */}
+      <TooltipProvider>
+        <aside className="w-[275px] hidden md:flex flex-col p-4 fixed h-screen z-20">
+          {/* Logo */}
+          <div className="p-3 mb-2">
+            <Link href="/feed" className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-primary/20">
+                <span className="text-white font-black text-xl">IF</span>
+              </div>
+              <span className="hidden xl:inline font-bold text-2xl bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                Connected
+              </span>
+            </Link>
+          </div>
 
-      {/* Rodapé da Sidebar */}
-      <div className="mt-auto w-full">
-        <div className="flex justify-between items-center w-full p-3 hover:bg-slate-100 dark:hover:bg-zinc-800/20 rounded-full transition cursor-pointer">
-          <div className="flex items-center gap-3">
-            {/* Avatar com Proteção */}
-            <div className="w-10 h-10 bg-zinc-800/10 rounded-full flex items-center justify-center font-bold text-white overflow-hidden">
-                {/* Se tiver foto, mostra a foto, senão mostra a Inicial */}
-                {user.profileImageUrl ? (
-                    <img src={user.profileImageUrl} alt="Avatar" className="w-full h-full object-cover"/>
-                ) : (
-                    <span className="text-gray-600 dark:text-gray-300">
-                        {user?.username?.[0]?.toUpperCase() || "U"}
-                    </span>
-                )}
+          {/* Navigation */}
+          <nav className="flex flex-col gap-1 mt-4">
+            {navItems.map((item) => (
+              <NavLink key={item.href} {...item} />
+            ))}
+            <NavLink
+              href={userId ? `/profile/${userId}` : "#"}
+              icon={User}
+              label="Perfil"
+            />
+          </nav>
+
+          {/* Theme Toggle */}
+          <div className="mt-auto pt-4">
+            <div className="flex items-center justify-between px-4 mb-4">
+              <span className="text-sm text-muted-foreground hidden xl:inline">
+                Aparência
+              </span>
+              <ThemeToggle />
             </div>
-            
-            <div className="hidden xl:block overflow-hidden">
-              {/* 3. PROTEÇÃO DE NOME: Usa Optional Chaining */}
-              <p className="font-bold text-sm truncate">
-                {user?.username || "Usuário"}
-              </p>
-              
-              {/* 4. PROTEÇÃO DE EMAIL: Já estava correta */}
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                @{user?.email?.split("@")?.[0] || "..."}
-              </p>
+
+            <Separator className="mb-4" />
+
+            {/* User Card */}
+            <div className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-accent transition cursor-pointer group">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <Avatar className="h-10 w-10 ring-2 ring-primary/10">
+                  <AvatarImage src={user?.profileImageUrl || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {user?.username?.[0]?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="hidden xl:block overflow-hidden">
+                  <p className="font-semibold text-sm truncate">
+                    {user?.username || "Usuário"}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    @{user?.email?.split("@")?.[0] || "..."}
+                  </p>
+                </div>
+              </div>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={logout}
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <LogOut size={18} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Sair</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
-        </div>
+        </aside>
+      </TooltipProvider>
 
-        <button
-          onClick={logout}
-          className="mt-2 flex items-center gap-2 text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800/10 cursor-pointer w-full px-4 py-2 rounded-lg transition text-sm font-bold"
-        >
-          <LogOut size={18} />{" "}
-          <span className="hidden xl:inline">Sair da Conta</span>
-        </button>
-      </div>
-    </aside>
+      {/* Mobile Header */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 glass border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link href="/feed" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+              <span className="text-white font-black text-sm">IF</span>
+            </div>
+            <span className="font-bold text-lg bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+              Connected
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Menu size={20} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px]">
+                <SheetHeader>
+                  <SheetTitle className="text-left flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                      <span className="text-white font-black text-sm">IF</span>
+                    </div>
+                    Menu
+                  </SheetTitle>
+                </SheetHeader>
+
+                <div className="mt-6 flex flex-col gap-1">
+                  {navItems.map((item) => (
+                    <NavLink key={item.href} {...item} isMobile />
+                  ))}
+                  <NavLink
+                    href={userId ? `/profile/${userId}` : "#"}
+                    icon={User}
+                    label="Perfil"
+                    isMobile
+                  />
+                </div>
+
+                <Separator className="my-4" />
+
+                {/* Mobile User Info */}
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user?.profileImageUrl || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {user?.username?.[0]?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm truncate">
+                      {user?.username}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user?.email}
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  variant="destructive"
+                  className="w-full mt-4"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                >
+                  <LogOut size={18} className="mr-2" />
+                  Sair da Conta
+                </Button>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </header>
+    </>
   );
 }

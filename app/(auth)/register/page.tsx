@@ -1,20 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 import { authService } from "@/services/authService";
 import { api, Campus } from "@/services/api";
 import Link from "next/link";
-import { UserPlus, AlertCircle, MapPin, Mail, Lock, User, Loader2 } from "lucide-react";
+import { UserPlus, AlertCircle, MapPin, Mail, Lock, User, Loader2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
-// Importando o Lottie dinamicamente
-const DotLottieReact = dynamic(
-  () => import("@lottiefiles/dotlottie-react").then((mod) => mod.DotLottieReact),
-  { ssr: false }
-);
-
-const PHRASES = ["Junte-se à comunidade IFPB.", "Crie seu perfil acadêmico.", "Conecte-se com seu campus.", "O seu futuro começa aqui."];
+const PHRASES = [
+  "Junte-se à comunidade IFPB.",
+  "Crie seu perfil acadêmico.",
+  "Conecte-se com seu campus.",
+  "O seu futuro começa aqui.",
+];
 
 function Typewriter() {
   const [text, setText] = useState("");
@@ -33,14 +43,22 @@ function Typewriter() {
       } else {
         setText(fullText.substring(0, text.length - 1));
         setTypingSpeed(40);
-        if (text === "") { setIsDeleting(false); setLoopNum((prev) => prev + 1); }
+        if (text === "") {
+          setIsDeleting(false);
+          setLoopNum((prev) => prev + 1);
+        }
       }
     };
     const timer = setTimeout(handleTyping, typingSpeed);
     return () => clearTimeout(timer);
   }, [text, isDeleting, loopNum, typingSpeed]);
 
-  return <span className="text-3xl md:text-5xl font-bold text-white drop-shadow-md">{text}<span className="animate-pulse font-light text-green-400">|</span></span>;
+  return (
+    <span className="text-3xl md:text-5xl font-bold text-white drop-shadow-md">
+      {text}
+      <span className="animate-pulse font-light text-emerald-400">|</span>
+    </span>
+  );
 }
 
 export default function RegisterPage() {
@@ -52,24 +70,11 @@ export default function RegisterPage() {
   const [campuses, setCampuses] = useState<Campus[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Estados de carregamento idênticos ao Login
-  const [bgImage, setBgImage] = useState("");
-  const [isAppLoading, setIsAppLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-    const randomNum = Math.floor(Math.random() * 1000);
-    const imageUrl = `https://loremflickr.com/1920/1080/white?random=${randomNum}`;
-    const img = new Image();
-    img.src = imageUrl;
-
-    img.onload = () => { if (isMounted) { setBgImage(imageUrl); setIsAppLoading(false); } };
-    img.onerror = () => { if (isMounted) setIsAppLoading(false); };
-
+    setMounted(true);
     api.getAllCampuses().then(setCampuses).catch(console.error);
-
-    return () => { isMounted = false; };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,103 +83,185 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
     try {
-      await authService.register({ email, username, campusId: Number(campusId), password });
+      await authService.register({
+        email,
+        username,
+        campusId: Number(campusId),
+        password,
+      });
       const user = await api.login({ email, password });
       login(user);
-    } catch (err: any) { setError(err.message || "Erro ao criar conta."); }
-    finally { setLoading(false); }
+    } catch (err: any) {
+      setError(err.message || "Erro ao criar conta.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Tela de Loading (idêntica ao Login)
-  if (isAppLoading) {
+  if (!mounted) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-r from-green-600 to-emerald-800">
-        <div className="w-64 h-64">
-          <DotLottieReact src="https://lottie.host/7740660d-94d8-4637-97bc-295f2440d1f5/MoLIQ8jEaS.lottie" loop autoplay />
-        </div>
-        <p className="text-white font-bold tracking-widest mt-2 animate-pulse">PREPARANDO O AMBIENTE...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="animate-spin text-primary" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center lg:justify-start p-4 lg:pl-32 lg:gap-24 xl:gap-32 bg-green-950 bg-cover bg-center bg-no-repeat transition-all duration-700" style={{ backgroundImage: bgImage ? `url('${bgImage}')` : "none" }}>
-      <div className="absolute inset-0 bg-green-950/60 backdrop-blur-[2px]" />
+    <div className="relative min-h-screen w-full flex items-center justify-center lg:justify-start p-4 lg:pl-32 lg:gap-24 xl:gap-32 bg-gradient-to-br from-emerald-950 via-slate-950 to-teal-950">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-3xl" />
+      </div>
 
-      <div className="relative z-10 bg-white/40 dark:bg-black/40 backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] w-full max-w-md border border-white/40 dark:border-white/10 animate-in fade-in zoom-in duration-500">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 mb-2">IFconnected</h1>
-          <p className="text-slate-800 dark:text-slate-200 font-bold">Criar nova conta</p>
-        </div>
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6 z-20">
+        <ThemeToggle />
+      </div>
 
-        {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-50/90 dark:bg-red-900/60 backdrop-blur-md border border-red-200 flex items-center gap-3">
-            <AlertCircle className="text-red-600" />
-            <span className="text-sm font-semibold text-red-700">{error}</span>
+      {/* Register Card */}
+      <Card className="relative z-10 w-full max-w-md border-0 shadow-2xl bg-card/80 backdrop-blur-xl animate-scale-in">
+        <CardContent className="p-8 md:p-10">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <Link href="/apresentation" className="inline-flex items-center gap-2 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                <span className="text-white font-black text-lg">IF</span>
+              </div>
+              <span className="text-2xl font-black bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                Connected
+              </span>
+            </Link>
+            <p className="text-muted-foreground">Criar nova conta</p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Inputs */}
-          {[
-            { label: "Nome de Usuário", icon: User, v: username, set: setUsername, type: "text", placeholder: "Seu nome ou apelido" },
-            { label: "Email institucional", icon: Mail, v: email, set: setEmail, type: "email", placeholder: "nome@ifpb.edu.br" },
-            { label: "Senha", icon: Lock, v: password, set: setPassword, type: "password", placeholder: "••••••••" }
-          ].map((f, i) => (
-            <div key={i} className="space-y-1">
-              <label className="text-xs font-extrabold text-slate-800 dark:text-slate-200 uppercase ml-1">
-                {f.label}
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <f.icon className="h-5 w-5 text-slate-500 group-focus-within:text-green-600" />
-                </div>
-                <input 
-                  type={f.type} 
-                  required 
-                  value={f.v} 
-                  onChange={(e) => f.set(e.target.value)} 
-                  placeholder={f.placeholder}
-                  className="block w-full pl-11 pr-4 py-3.5 bg-white/70 dark:bg-zinc-900/70 border border-zinc-900 rounded-2xl placeholder-slate-500 dark:placeholder-slate-500 focus:ring-2 focus:ring-green-500/60 outline-none transition-all shadow-inner" 
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium flex items-center gap-3">
+              <AlertCircle size={18} />
+              {error}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="username" className="text-sm font-semibold">
+                Nome de usuário
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="username"
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Seu nome ou apelido"
+                  className="pl-10 h-12"
                 />
               </div>
             </div>
-          ))}
 
-          {/* Campus Select */}
-          <div className="space-y-1">
-            <label className="text-xs font-extrabold text-slate-800 dark:text-slate-200 uppercase ml-1">
-              Campus
-            </label>
-            <select 
-              required 
-              value={campusId} 
-              onChange={(e) => setCampusId(e.target.value)} 
-              className="block w-full px-4 py-3.5 bg-white/70 dark:bg-zinc-900/70 border border-zinc-900 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500/60 outline-none transition-all"
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-semibold">
+                Email institucional
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nome@ifpb.edu.br"
+                  className="pl-10 h-12"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-semibold">
+                Senha
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="pl-10 h-12"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="campus" className="text-sm font-semibold">
+                Campus
+              </Label>
+              <Select value={campusId} onValueChange={setCampusId}>
+                <SelectTrigger className="h-12">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder="Selecione seu Campus..." />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {campuses.map((c) => (
+                    <SelectItem key={c.id} value={c.id.toString()}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 text-base font-semibold rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
             >
-              <option value="" disabled>Selecione seu Campus...</option>
-              {campuses.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                  Criando conta...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Cadastrar-se
+                </>
+              )}
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-border text-center">
+            <p className="text-sm text-muted-foreground">
+              Já tem conta?{" "}
+              <Link
+                href="/login"
+                className="font-semibold text-primary hover:text-primary/80 hover:underline underline-offset-4"
+              >
+                Fazer login
+              </Link>
+            </p>
           </div>
+        </CardContent>
+      </Card>
 
-          <button 
-            disabled={loading} 
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:scale-[1.02] transition-all disabled:opacity-70"
-          >
-            {loading ? <Loader2 className="animate-spin mx-auto" /> : "Cadastrar-se"}
-          </button>
-        </form>
-
-        <p className="mt-8 text-center text-sm text-slate-800 font-semibold">
-          Já tem conta? <Link href="/login" className="font-black text-green-700 hover:underline">Fazer login</Link>
-        </p>
-      </div>
-
-      <div className="hidden lg:flex relative z-10 flex-col justify-center max-w-2xl text-left animate-in fade-in slide-in-from-right-8 duration-700">
-        <h2 className="text-2xl font-semibold text-green-50 mb-2 tracking-wide">Bem-vindo ao IFconnected.</h2>
-        <div className="h-24 flex items-start"><Typewriter /></div>
+      {/* Desktop Side Content */}
+      <div className="hidden lg:flex relative z-10 flex-col justify-center max-w-2xl text-left">
+        <h2 className="text-xl font-medium text-emerald-100/80 mb-2 tracking-wide">
+          Bem-vindo ao IFConnected.
+        </h2>
+        <div className="h-24 flex items-start">
+          <Typewriter />
+        </div>
       </div>
     </div>
   );

@@ -1,15 +1,19 @@
 "use client";
+
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { postService } from "@/services/postService";
 import { Post } from "@/types";
-import { PostCard } from "../feed/PostCard";
+import { PostCard } from "./PostCard";
 import { Home, Users, MapPin, Loader2, RefreshCw } from "lucide-react";
-import CreatePost from "../../../features/feed/CreatePost";
+import CreatePost from "@/features/feed/CreatePost";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type FeedType = "global" | "following" | "regional";
 
-const tabItems: { id: FeedType; icon: any; label: string }[] = [
+const tabItems: { id: FeedType; icon: typeof Home; label: string }[] = [
   { id: "global", icon: Home, label: "Global" },
   { id: "following", icon: Users, label: "Seguindo" },
   { id: "regional", icon: MapPin, label: "Perto" },
@@ -35,11 +39,9 @@ export default function FeedPage() {
       } else if (activeTab === "following") {
         data = await postService.getFriendsFeed(user.id);
       } else if (activeTab === "regional") {
-        // Rota regional (o backend valida se o usuário tem campusId)
         data = await postService.getRegionalFeed(user.id, 50);
       }
 
-      // Ordem: Mais novo primeiro
       const sorted = data.sort(
         (a, b) =>
           new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
@@ -60,69 +62,92 @@ export default function FeedPage() {
 
   const handlePostCreated = (newPost: Post) => {
     setPosts((prev) => [newPost, ...prev]);
-    setActiveTab("global"); // Volta para o feed principal para ver o novo post
+    setActiveTab("global");
   };
 
-  // Componente de Cabeçalho do Feed (Abas)
-  const FeedHeader = () => (
-    <div className="flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-zinc-900 sticky top-0 z-10">
-      {tabItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => setActiveTab(item.id)}
-          className={`flex-1 py-4 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative 
-                        ${
-                          activeTab === item.id
-                            ? "text-white"
-                            : "text-slate-500 dark:text-slate-400"
-                        }`}
-        >
-          {item.label}
-          {activeTab === item.id && (
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1  bg-emerald-500 rounded-t-full"></div>
-          )}
-        </button>
+  const FeedSkeleton = () => (
+    <div className="divide-y divide-border">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="p-4 animate-pulse">
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-3 w-3/4" />
+              <Skeleton className="h-20 w-full rounded-xl" />
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );
 
   return (
     <div className="pb-10">
-      <FeedHeader />
-
-      {/* Área de Criação de Post (Substitua pelo componente real CreatePost) */}
-      <div className="border-b border-slate-200 dark:border-y-zinc-800">
-        {/* Aqui você chamaria o componente CreatePost */}
-        <CreatePost user={user!} onPostCreated={handlePostCreated} />
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="p-4">
+          <h1 className="text-xl font-bold mb-4">Página Inicial</h1>
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FeedType)}>
+            <TabsList className="w-full grid grid-cols-3 bg-muted/50">
+              {tabItems.map((item) => (
+                <TabsTrigger
+                  key={item.id}
+                  value={item.id}
+                  className="flex items-center gap-2 data-[state=active]:bg-background"
+                >
+                  <item.icon size={16} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
+
+      {/* Create Post */}
+      <CreatePost user={user!} onPostCreated={handlePostCreated} />
 
       {/* Feed Content */}
       {loading ? (
-        <div className="p-10 text-center">
-          <Loader2 className="animate-spin text-emerald-500 mx-auto" size={24} />
-        </div>
+        <FeedSkeleton />
       ) : error ? (
-        <div className="p-10 text-center text-red-600 border border-red-200 rounded-xl m-4 bg-red-50">
-          <p>{error}</p>
-          <button
-            onClick={fetchPosts}
-            className="mt-3 text-emerald-600 font-bold flex items-center gap-2 mx-auto hover:underline text-emerald-500"          >
-            <RefreshCw size={16} /> Tentar novamente
-          </button>
+        <div className="p-10 text-center">
+          <div className="max-w-md mx-auto space-y-4">
+            <div className="w-16 h-16 mx-auto rounded-full bg-destructive/10 flex items-center justify-center">
+              <RefreshCw className="text-destructive" size={24} />
+            </div>
+            <p className="text-destructive font-medium">{error}</p>
+            <Button
+              onClick={fetchPosts}
+              variant="outline"
+              className="mt-4"
+            >
+              <RefreshCw size={16} className="mr-2" />
+              Tentar novamente
+            </Button>
+          </div>
         </div>
       ) : posts.length === 0 ? (
-        <div className="p-10 text-center text-slate-500">
-          <p className="font-bold mb-2">Sem posts para mostrar.</p>
-          {activeTab === "regional" && (
-            <p className="text-sm">
-              Vincule seu campus ao perfil para ver posts da sua região!
-            </p>
-          )}
+        <div className="p-10 text-center">
+          <div className="max-w-md mx-auto space-y-4">
+            <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center">
+              <MapPin className="text-muted-foreground" size={24} />
+            </div>
+            <p className="font-semibold text-foreground">Sem posts para mostrar.</p>
+            {activeTab === "regional" && (
+              <p className="text-sm text-muted-foreground">
+                Vincule seu campus ao perfil para ver posts da sua região!
+              </p>
+            )}
+          </div>
         </div>
       ) : (
-        posts.map((post) => (
-          <PostCard key={post.id} post={post} currentUser={user!} />
-        ))
+        <div className="divide-y divide-border">
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} currentUser={user!} />
+          ))}
+        </div>
       )}
     </div>
   );
