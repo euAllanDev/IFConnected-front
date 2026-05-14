@@ -34,7 +34,7 @@ interface UserProfileData {
 export default function ProfilePage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user: currentUser, setUserAndPersist } = useAuth();
+  const { user: currentUser, updateUser } = useAuth();
   const profileId = Number(id);
 
   // Estados Base
@@ -93,10 +93,9 @@ export default function ProfilePage() {
       prev ? { ...prev, user: updatedUser } : prev
     );
 
-    // 2) se você estiver editando seu próprio perfil,
-    // atualiza o user global do app (feed / navbar / composer)
+    // atualiza o user global do app e salva no LocalStorage
     if (isOwnProfile) {
-      setUserAndPersist(updatedUser);
+      updateUser(updatedUser); // 🚀 Chama a nova função do contexto!
     }
   };
   const handleDeleteProject = async (id: number) => {
