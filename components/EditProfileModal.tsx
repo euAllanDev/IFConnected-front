@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { User } from "@/types";
 import { api } from "@/services/api";
-import { X, Camera, Loader2, Save } from "lucide-react";
+import { X, Camera, Loader2, AlertCircle } from "lucide-react"; 
 import Image from "next/image";
 
 interface EditProfileModalProps {
@@ -22,6 +22,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio || "");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); 
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
@@ -29,13 +30,13 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Resetar estados ao abrir
   useEffect(() => {
     if (isOpen) {
       setUsername(user.username);
       setBio(user.bio || "");
       setPreviewUrl(user.profileImageUrl || null);
       setSelectedFile(null);
+      setErrorMessage(null); 
     }
   }, [isOpen, user]);
 
@@ -46,12 +47,14 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setErrorMessage(null); 
     }
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage(null);
 
     try {
       let updatedUser = { ...user, username, bio };
@@ -68,11 +71,21 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       // 2. Update dos dados de texto
       const finalUser = await api.updateUser(updatedUser);
 
-      onUpdate(finalUser); // Atualiza a tela
+      onUpdate(finalUser); 
       onClose();
-    } catch (error) {
-      console.error("Erro ao atualizar:", error);
-      alert("Erro ao salvar perfil.");
+    } catch (error: any) {
+      // TRATAMENTO DE ERRO DO BACKEND 
+      const status = error.response?.status;
+
+      // Se for 409 ou 400, é um erro esperado (Nome ocupado, etc.)
+      if (status === 409 || status === 400) {
+        setErrorMessage("⚠️ Este nome já está em uso. Escolha outro!");
+      } 
+      // Se for qualquer outra coisa 
+      else {
+        console.error("Erro inesperado ao atualizar:", error);
+        setErrorMessage("❌ Ocorreu um erro ao salvar. Tente novamente.");
+      }
     } finally {
       setLoading(false);
     }
@@ -94,42 +107,31 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </button>
         </div>
 
-        <form
-          onSubmit={handleSave}
-          className="flex flex-col flex-1 overflow-y-auto"
-        >
+        <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
+            
+            {/* ALERT DE ERRO (Aparece se o nome estiver ocupado) */}
+            {errorMessage && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-medium border border-red-200 dark:border-red-800 animate-in slide-in-from-top-2">
+                <AlertCircle size={18} />
+                {errorMessage}
+              </div>
+            )}
+
             {/* Foto */}
             <div className="flex justify-center">
-              <div
-                className="relative group cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-              >
+              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                 <div className="w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 shadow-md overflow-hidden relative bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
                   {previewUrl ? (
-                    <Image
-                      src={previewUrl}
-                      alt="Preview"
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
+                    <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
                   ) : (
-                    <span className="text-4xl font-bold text-slate-400">
-                      {username?.[0]?.toUpperCase()}
-                    </span>
+                    <span className="text-4xl font-bold text-slate-400">{username?.[0]?.toUpperCase()}</span>
                   )}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Camera className="text-white" size={32} />
                   </div>
                 </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="hidden"
-                />
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
               </div>
             </div>
 
@@ -142,8 +144,15 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 <input
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if(errorMessage) setErrorMessage(null); // Limpa o erro enquanto o usuário digita de novo
+                  }}
+                  className={`w-full p-3 rounded-lg border bg-transparent dark:text-white focus:ring-2 outline-none transition-all ${
+                    errorMessage 
+                      ? "border-red-500 focus:ring-red-500" // Fica vermelho se der erro
+                      : "border-slate-300 dark:border-slate-700 focus:ring-emerald-500"
+                  }`}
                   required
                 />
               </div>
@@ -175,13 +184,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-full font-bold text-white bg-black dark:bg-emerald-500 hover:opacity-80 transition-opacity flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-2.5 rounded-full font-bold text-white bg-black dark:bg-emerald-500 hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
             >
-              {loading ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                "Salvar"
-              )}
+              {loading ? <Loader2 size={18} className="animate-spin" /> : "Salvar"}
             </button>
           </div>
         </form>
