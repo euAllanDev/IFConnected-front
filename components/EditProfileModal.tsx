@@ -5,6 +5,11 @@ import { User } from "@/types";
 import { api } from "@/services/api";
 import { X, Camera, Loader2, AlertCircle } from "lucide-react"; 
 import Image from "next/image";
+import ImageCropEditor, {
+  cropImageFile,
+  defaultCropConfig,
+  type CropConfig,
+} from "@/components/ImageCropEditor";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -25,6 +30,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null); 
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [photoCrop, setPhotoCrop] = useState<CropConfig>(defaultCropConfig());
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     user.profileImageUrl || null
   );
@@ -36,6 +42,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setBio(user.bio || "");
       setPreviewUrl(user.profileImageUrl || null);
       setSelectedFile(null);
+      setPhotoCrop(defaultCropConfig());
       setErrorMessage(null); 
     }
   }, [isOpen, user]);
@@ -47,6 +54,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (file) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setPhotoCrop(defaultCropConfig());
       setErrorMessage(null); 
     }
   };
@@ -57,13 +65,18 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     setErrorMessage(null);
 
     try {
-      let updatedUser = { ...user, username, bio };
+      const updatedUser = { ...user, username, bio };
 
       // 1. Upload da foto (se houver nova)
       if (selectedFile) {
+        const croppedAvatar = await cropImageFile(selectedFile, photoCrop, {
+          width: 600,
+          height: 600,
+          fileName: `avatar-${user.id}`,
+        });
         const userWithPhoto = await api.uploadProfilePicture(
           user.id,
-          selectedFile
+          croppedAvatar
         );
         updatedUser.profileImageUrl = userWithPhoto.profileImageUrl;
       }
@@ -73,9 +86,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
       onUpdate(finalUser); 
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // TRATAMENTO DE ERRO DO BACKEND 
-      const status = error.response?.status;
+      const status =
+        typeof error === "object" && error !== null && "response" in error
+          ? (error as { response?: { status?: number } }).response?.status
+          : undefined;
 
       // Se for 409 ou 400, é um erro esperado (Nome ocupado, etc.)
       if (status === 409 || status === 400) {
@@ -119,20 +135,34 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             )}
 
             {/* Foto */}
-            <div className="flex justify-center">
-              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                <div className="w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 shadow-md overflow-hidden relative bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
-                  {previewUrl ? (
-                    <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
-                  ) : (
-                    <span className="text-4xl font-bold text-slate-400">{username?.[0]?.toUpperCase()}</span>
-                  )}
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="text-white" size={32} />
+            <div className="space-y-4">
+              <div className="flex justify-center">
+                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                  <div className="w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 shadow-md overflow-hidden relative bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                    {previewUrl ? (
+                      <Image src={previewUrl} alt="Preview" fill className="object-cover" unoptimized />
+                    ) : (
+                      <span className="text-4xl font-bold text-slate-400">{username?.[0]?.toUpperCase()}</span>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Camera className="text-white" size={32} />
+                    </div>
                   </div>
+                  <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
                 </div>
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
               </div>
+
+              {selectedFile && previewUrl ? (
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-slate-50 dark:bg-zinc-950/40">
+                  <ImageCropEditor
+                    imageUrl={previewUrl}
+                    value={photoCrop}
+                    onChange={setPhotoCrop}
+                    shape="circle"
+                    label="Arraste para centralizar sua foto"
+                  />
+                </div>
+              ) : null}
             </div>
 
             {/* Inputs */}

@@ -4,6 +4,11 @@ import { Post, User } from "@/types";
 import { postService } from "@/services/postService";
 import { Image as ImageIcon, X, Loader2 } from "lucide-react";
 import Image from "next/image";
+import ImageCropEditor, {
+  cropImageFile,
+  defaultCropConfig,
+  type CropConfig,
+} from "@/components/ImageCropEditor";
 
 interface CreatePostProps {
   user: User;
@@ -14,6 +19,7 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [imageCrop, setImageCrop] = useState<CropConfig>(defaultCropConfig());
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,9 +55,11 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
     if (file && file.type.startsWith("image/")) {
       setImageFile(file);
       setImagePreviewUrl(URL.createObjectURL(file));
+      setImageCrop(defaultCropConfig());
     } else {
       setImageFile(null);
       setImagePreviewUrl(null);
+      setImageCrop(defaultCropConfig());
     }
   };
 
@@ -63,7 +71,14 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
     const formData = new FormData();
     formData.append("userId", currentUser.id.toString());
     formData.append("content", content);
-    if (imageFile) formData.append("file", imageFile);
+    if (imageFile) {
+      const croppedPostImage = await cropImageFile(imageFile, imageCrop, {
+        width: 1080,
+        height: 1080,
+        fileName: `post-${currentUser.id}`,
+      });
+      formData.append("file", croppedPostImage);
+    }
 
     try {
       const newPost = await postService.create(formData);
@@ -71,6 +86,7 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
       setContent("");
       setImageFile(null);
       setImagePreviewUrl(null);
+      setImageCrop(defaultCropConfig());
       if (fileInputRef.current) fileInputRef.current.value = "";
 
       onPostCreated(newPost);
@@ -118,17 +134,20 @@ export default function CreatePost({ user, onPostCreated }: CreatePostProps) {
           />
 
           {imagePreviewUrl && (
-            <div className="relative mt-3 mb-3">
-              <img
-                src={imagePreviewUrl}
-                alt="Preview"
-                className="max-h-64 object-cover rounded-xl w-full border border-slate-200 dark:border-slate-700"
+            <div className="relative mt-3 mb-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-700 dark:bg-zinc-950/40">
+              <ImageCropEditor
+                imageUrl={imagePreviewUrl}
+                value={imageCrop}
+                onChange={setImageCrop}
+                shape="square"
+                label="Quadrado do post: arraste e ajuste o zoom"
               />
               <button
                 type="button"
                 onClick={() => {
                   setImageFile(null);
                   setImagePreviewUrl(null);
+                  setImageCrop(defaultCropConfig());
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
                 className="absolute top-2 right-2 p-1 bg-black/50 text-white rounded-full hover:bg-black/70 transition"

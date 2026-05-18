@@ -3,6 +3,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/services/api";
 import { User } from "@/types";
+import Image from "next/image";
 import { Loader2, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -41,7 +42,7 @@ export function SugestoesBar() {
   }, [user]);
 
   return (
-    <div className="w-full bg-slate-50 dark:bg-zinc-700/10 p-4 rounded-xl sticky top-4">
+    <div className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 sticky top-4 dark:border-slate-800 dark:bg-zinc-900">
       <h3 className="font-extrabold text-xl mb-4 text-slate-900 dark:text-slate-50 flex items-center gap-2">
         <Zap size={20} className="text-emerald-500" /> Quem Seguir
       </h3>
@@ -58,8 +59,18 @@ export function SugestoesBar() {
                 className="flex items-center gap-3 cursor-pointer"
                 onClick={() => router.push(`/profile/${s.id}`)}
               >
-                <div className="w-10 h-10 bg-emerald-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-emerald-600 dark:text-slate-200">
-                  {s.username[0].toUpperCase()}
+                <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-emerald-100 font-bold text-emerald-600 dark:bg-slate-700 dark:text-slate-200">
+                  {s.profileImageUrl ? (
+                    <Image
+                      src={s.profileImageUrl}
+                      alt={s.username}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    s.username[0].toUpperCase()
+                  )}
                 </div>
                 <div>
                   <p className="font-bold text-sm  truncate">{s.username}</p>
