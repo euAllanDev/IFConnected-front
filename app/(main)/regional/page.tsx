@@ -107,7 +107,7 @@ export default function RegionalPage() {
   // Sem Campus
   if (user && !user.campusId) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center bg-white dark:bg-black">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center bg-white dark:bg-zinc-900">
         <div className="bg-slate-100 dark:bg-zinc-900 p-6 rounded-full mb-4">
           <MapPinOff size={48} className="text-slate-400" />
         </div>
@@ -129,7 +129,7 @@ export default function RegionalPage() {
   }
 
   return (
-    <div className="pb-10 min-h-screen bg-slate-50 dark:bg-black">
+    <div className="pb-10 min-h-screen bg-slate-50 dark:bg-zinc-900">
       {/* Header */}
       <div className="bg-white dark:bg-zinc-900 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
         <h1 className="font-bold text-xl flex items-center gap-2 text-slate-900 dark:text-white">
@@ -178,7 +178,7 @@ export default function RegionalPage() {
             {currentItems.map((suggestion) => (
               <div
                 key={suggestion.id}
-                className="bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col items-center justify-between transition-all hover:border-emerald-200 dark:hover:border-emerald-900 h-full"
+                className="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col items-center justify-between transition-all hover:border-emerald-200 dark:hover:border-emerald-900 h-full"
               >
                 <div className="flex flex-col items-center w-full">
                   {/* Avatar */}
@@ -218,7 +218,7 @@ export default function RegionalPage() {
                 {/* Botão Seguir */}
                 <button
                   onClick={() => handleFollowSuggestion(suggestion.id)}
-                  className="w-full py-1.5 px-3 bg-white dark:bg-black border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-bold rounded-full hover:bg-emerald-50 dark:hover:bg-slate-900 hover:text-emerald-600 hover:border-emerald-200 transition flex items-center justify-center gap-1"
+                  className="w-full py-1.5 px-3 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-bold rounded-full hover:bg-emerald-50 dark:hover:bg-zinc-800 hover:text-emerald-600 hover:border-emerald-200 transition flex items-center justify-center gap-1"
                 >
                   <UserPlus size={14} /> Seguir
                 </button>

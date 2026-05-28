@@ -248,12 +248,12 @@ export function PostCard({ post, currentUser }: PostCardProps) {
 
           {/* Imagem do Post */}
           {post.imageUrl && (
-            <div className="mt-3 rounded-2xl overflow-hidden border border-slate-200 dark:border-zinc-800 relative w-full aspect-video bg-slate-100 dark:bg-black flex justify-center items-center">
+            <div className="mt-3 rounded-2xl overflow-hidden border border-slate-200 dark:border-zinc-800 relative w-full aspect-square bg-slate-100 dark:bg-zinc-950 flex justify-center items-center">
               <Image
                 src={post.imageUrl}
                 alt="Post media"
                 fill
-                className="object-contain"
+                className="object-cover"
                 unoptimized
               />
             </div>

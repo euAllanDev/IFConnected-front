@@ -100,7 +100,7 @@ export default function Sidebar({ user }: { user: User | null }) {
               
               {/* 4. PROTEÇÃO DE EMAIL: Já estava correta */}
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                @{user?.email?.split("@")?.[0] || "..."}
+                @{user?.username?.toLowerCase().replace(/\s/g, "") || "..."}
               </p>
             </div>
           </div>
